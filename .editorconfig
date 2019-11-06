@@ -1,0 +1,13 @@
+﻿[*.cs]
+
+# CA1063: Implement IDisposable Correctly
+dotnet_diagnostic.CA1063.severity = silent
+
+# RCS1057: Add empty line between declarations.
+dotnet_diagnostic.RCS1057.severity = silent
+
+# IDE1006: Naming Styles
+dotnet_diagnostic.IDE1006.severity = silent
+
+# RCS1163: Unused parameter.
+dotnet_diagnostic.RCS1163.severity = silent

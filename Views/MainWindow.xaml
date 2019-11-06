@@ -1,0 +1,152 @@
+﻿<Window x:Class="JellyMusic.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:ViewModels="clr-namespace:JellyMusic.ViewModels"
+        xmlns:Views="clr-namespace:JellyMusic.Views"
+        xmlns:uc="clr-namespace:JellyMusic.UserControls"
+        mc:Ignorable="d"
+                     
+        d:DataContext="{d:DesignInstance ViewModels:MainViewModel}"
+                
+        Title="JellyMusic" 
+        Height="700" Width="1200"
+        ResizeMode="CanMinimize"
+        
+        TextElement.Foreground="White"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="15"
+        TextOptions.TextFormattingMode="Ideal" 
+        FontFamily="Open Sans"
+        Background="{StaticResource BackgroundGradient}">
+    <WindowChrome.WindowChrome>
+        <WindowChrome 
+            GlassFrameThickness="0" 
+            CornerRadius="0" 
+            CaptionHeight="0" 
+            UseAeroCaptionButtons="False" 
+            ResizeBorderThickness="7"
+            />
+    </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <Storyboard x:Key="OpenSideMenu">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="SideMenu">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="150"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="CloseSideMenu">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="SideMenu">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="60"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+    <Border BorderBrush="Transparent"
+            BorderThickness='1'>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- Background image -->
+            <Image Source="{Binding ActiveTrack.AlbumPictureSource}"
+                   Grid.ColumnSpan="2" Grid.RowSpan="3" 
+                   Stretch="UniformToFill"
+                   Opacity=".5">
+                <Image.Effect>
+                    <BlurEffect Radius="25"/>
+                </Image.Effect>
+            </Image>
+            <!-- Title Bar -->
+            <Grid MouseDown="OnDragMoveWindow"
+                  Grid.Row="0" Grid.ColumnSpan="2">
+                <Rectangle Fill="{StaticResource Panel}"/>
+                <TextBlock Text="JellyMusic"
+                           HorizontalAlignment="Left" Margin="15,0"
+                           VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" 
+                                    HorizontalAlignment="Right">
+                    <Button x:Name="WindowMinimizeButton" 
+                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                    Click="WindowMinimizeButton_Click" Height="auto">
+                        <materialDesign:PackIcon Kind="Minus" Width="Auto" Height="Auto"/>
+                    </Button>
+                    <Button x:Name="WindowCloseButton" 
+                                    Style="{StaticResource MaterialDesignFlatButton}" 
+                                    Foreground="Red" 
+                                    Click="WindowCloseButton_Click" Height="Auto">
+                        <materialDesign:PackIcon Kind="Power" Width="Auto" Height="Auto"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <!-- Side menu -->
+            <Grid x:Name="SideMenu" 
+                  Grid.Row="1" Grid.Column="0"
+                  HorizontalAlignment="Left"
+                  Width="60">
+                <Rectangle Fill="{StaticResource Panel}"/>
+                <StackPanel>
+                    <ToggleButton x:Name="ButtonOpenSideMenu"
+                                  Style="{DynamicResource  MaterialDesignHamburgerToggleButton}"
+                                  Width="40" Height="40"
+                                  HorizontalAlignment="Right"
+                                  Margin="10"
+                                  Checked="ButtonOpenSideMenu_Checked"
+                                  Unchecked="ButtonOpenSideMenu_Unchecked"/>
+                    <Image Height="80" VerticalAlignment="Bottom"/>
+                    <ListView x:Name="ListViewMenu" 
+                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListViewItem x:Name="ItemHome" Height="60" Selected="ItemHome_Selected">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="HomeOutline" Height="25" Width="25" Margin="10"/>
+                                <TextBlock Text="YOUR ZONE" VerticalAlignment="Center" Margin="5"/>
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem x:Name="ItemPlaylists" Height="60" Selected="ItemPlaylists_Selected">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="PlaylistMusicOutline" Height="25" Width="25" Margin="10"/>
+                                <TextBlock Text="PLAYLISTS" VerticalAlignment="Center" Margin="5"/>
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem x:Name="ItemFavorite" Height="60" Selected="ItemFavorite_Selected">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="HeartMultipleOutline" Height="25" Width="25" Margin="10"/>
+                                <TextBlock Text="FAVORITES" VerticalAlignment="Center"  Margin="5"/>
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem x:Name="ItemSettings" Height="60" Selected="ItemSettings_Selected">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="SettingsOutline" Height="25" Width="25" Margin="10"/>
+                                <TextBlock Text="SETTINGS" VerticalAlignment="Center"  Margin="5"/>
+                            </StackPanel>
+                        </ListViewItem>
+                    </ListView>
+                </StackPanel>
+            </Grid>
+            <!-- Content Area -->
+            <materialDesign:Transitioner x:Name="ContentTransitioner" SelectedIndex="0"
+                                             Grid.Row="1" Grid.Column="1" Margin="10">
+                <uc:HomeContent/>
+                
+                <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
+
+                    <materialDesign:TransitionerSlide.BackwardWipe>
+                        <materialDesign:SlideOutWipe/>
+                    </materialDesign:TransitionerSlide.BackwardWipe>
+
+                    <uc:PlaylistsContent/>
+
+                </materialDesign:TransitionerSlide>
+            </materialDesign:Transitioner>
+            <!-- Media control -->
+            <Views:PlaybarView x:Name="Playbar"
+                  Grid.Row="2" Grid.ColumnSpan="2"/>
+        </Grid>
+    </Border>
+</Window>
