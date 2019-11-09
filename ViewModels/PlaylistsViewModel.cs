@@ -1,31 +1,29 @@
 ﻿using JellyMusic.Core;
 using JellyMusic.Models;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+
+using PropertyChanged;
+using System.Windows.Input;
 
 namespace JellyMusic.ViewModels
 {
-    class PlaylistsViewModel : INotifyPropertyChanged
+    [AddINotifyPropertyChangedInterface]
+    class PlaylistsViewModel
     {
-        public readonly string folderBasedPlaylistsDir = Directory.GetCurrentDirectory() + @"\Data\Folder based playlists\";
-        public readonly string customPlaylistsDir = Directory.GetCurrentDirectory() + @"\Data\Custom playlists\";
+        public readonly string PlaylistsDir = Directory.GetCurrentDirectory() + @"\DATA\PLAYLISTS\";
 
-        private readonly JsonService<FolderBasedPlaylist> fbSerializer;
-        private readonly JsonService<CustomPlaylist> cpSerializer;
+        private readonly JsonService<Playlist> _serializer;
 
         public BindingList<Playlist> PlaylistsCollection;
         public List<PlaylistTrack> AllTracks { get; private set; }
 
         public PlaylistsViewModel()
         {
-            fbSerializer = new JsonService<FolderBasedPlaylist>(folderBasedPlaylistsDir);
-            cpSerializer = new JsonService<CustomPlaylist>(customPlaylistsDir);
+            _serializer = new JsonService<Playlist>(PlaylistsDir);
 
             PlaylistsCollection = new BindingList<Playlist>()
             {
@@ -34,30 +32,44 @@ namespace JellyMusic.ViewModels
                 AllowRemove = true
             };
 
+            PlaylistsCollection.ListChanged += (sender, e) =>
+            {
+                Console.WriteLine("PlaylisCollection has been changed: " + e.ListChangedType.ToString());
+                switch (e.ListChangedType)
+                {
+                    case ListChangedType.ItemAdded:
+
+                        List<PlaylistTrack> addedItems = new List<PlaylistTrack>();
+
+                        foreach (var item in PlaylistsCollection[e.NewIndex].Tracks)
+                        {
+                            if (!AllTracks.Contains(item))
+                            {
+                                addedItems.Add(item);
+                            }
+                        }
+
+                        PerformCaching(addedItems);
+                        AllTracks.AddRange(addedItems);
+                        break;
+                    case ListChangedType.ItemDeleted:
+                        LoadAllTracks();
+                        break;
+                }
+            };
+
             LoadPlaylists();
             LoadAllTracks();
+            PerformCaching(AllTracks);
         }
 
         private void LoadPlaylists()
         {
-            // Load folder-based playlists
-            foreach (string elem in IOService.GetFilesByExtensions(folderBasedPlaylistsDir, SearchOption.TopDirectoryOnly, ".json"))
+            foreach (string elem in IOService.GetFilesByExtensions(PlaylistsDir, SearchOption.TopDirectoryOnly, ".json"))
             {
                 try
                 {
-                    PlaylistsCollection.Add(fbSerializer.DeserializeFromFile(elem));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-            // Load custom playlists
-            foreach (string elem in IOService.GetFilesByExtensions(customPlaylistsDir, SearchOption.TopDirectoryOnly, ".json"))
-            {
-                try
-                {
-                    PlaylistsCollection.Add(cpSerializer.DeserializeFromFile(elem));
+                    PlaylistsCollection.Add(_serializer.DeserializeFromFile(elem));
                 }
                 catch (Exception ex)
                 {
@@ -78,22 +90,15 @@ namespace JellyMusic.ViewModels
             }
         }
 
-        public void SavePlaylist(Playlist playlist, bool isFolderBased)
+        private void PerformCaching(ICollection<PlaylistTrack> tracks)
         {
-            if (isFolderBased)
-            {
-                fbSerializer.SerializeToFile(playlist.Name + ".json", (FolderBasedPlaylist)playlist);
-            }
-            else
-            {
-                cpSerializer.SerializeToFile(playlist.Name + ".json", (CustomPlaylist)playlist);
-            }
+            PictureCachingService cachingService = new PictureCachingService(tracks);
+            cachingService.CacheAndAssign();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public void SavePlaylist(Playlist playlist)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            _serializer.SerializeToFile(playlist.Name + ".json", playlist);
         }
     }
 }

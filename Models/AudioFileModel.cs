@@ -2,8 +2,11 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
+
 using JellyMusic.Core;
+
 using Newtonsoft.Json;
+using PropertyChanged;
 
 namespace JellyMusic.Models
 {
@@ -13,7 +16,9 @@ namespace JellyMusic.Models
         public DateTime LastModified { get; set; }
         public TimeSpan TrackLength { get; set; }
     }
-    public class PlaylistTrack : AudioFile, INotifyPropertyChanged
+
+    [AddINotifyPropertyChangedInterface]
+    public class PlaylistTrack : AudioFile
     {
         // General info
         public string Title { get; set; }
@@ -35,11 +40,5 @@ namespace JellyMusic.Models
         // Realization of id-gen is in JellyMusic.Core.TagReader
         public string Id { get; set; }
         public byte Rating { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

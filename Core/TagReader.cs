@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Text;
 using JellyMusic.Models;
+using System.Text.RegularExpressions;
 
 namespace JellyMusic.Core
 {
@@ -40,27 +41,31 @@ namespace JellyMusic.Core
         {
             if (HasAlbumCover)
             {
-                var picture = file.Tag.Pictures[0];
-
-                // Load image data in MemoryStream
-                using (MemoryStream memoryStream = new MemoryStream(picture.Data.Data))
-                {
-                    BitmapImage bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-
-                    bitmap.DecodePixelHeight = height;
-                    bitmap.DecodePixelWidth = width;
-
-                    bitmap.StreamSource = memoryStream;
-                    bitmap.EndInit();
-
-                    return bitmap;
-                }
+                return GetAlbumCoverBitmap(width, height);
             }
             else
             {
                 return null;
+            }
+        }
+        public BitmapImage GetAlbumCoverBitmap(int width, int height)
+        {
+            var picture = file.Tag.Pictures[0];
+
+            // Load image data in MemoryStream
+            using (MemoryStream memoryStream = new MemoryStream(picture.Data.Data))
+            {
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+
+                bitmap.DecodePixelHeight = height;
+                bitmap.DecodePixelWidth = width;
+
+                bitmap.StreamSource = memoryStream;
+                bitmap.EndInit();
+
+                return bitmap;
             }
         }
 
@@ -78,7 +83,6 @@ namespace JellyMusic.Core
                 Year = Year,
 
                 Lyrics = Lyrics,
-                AlbumPictureSource = GetAlbumPictureSource(300,300),
                 TrackLength = TrackLength,
 
                 Album = Album,
@@ -90,14 +94,12 @@ namespace JellyMusic.Core
         // Generate a unique identification string
         private string GenerateId()
         {
-            // Select either album or, in case it is not specified in metadata, other properties for formatting
-            string sourceString = Album ?? Title + Performer + Year;
-            StringBuilder result = new StringBuilder();
-            for (int i = 0; i < sourceString.Length; i++)
-            {
-                if (sourceString[i] != ' ') result.Append(sourceString[i]);
-            }
-            return result.ToString();
+            string sourceString = Album + Title + Performer + Year;
+
+            // only space, capital A-Z, lowercase a-z, and digits 0-9 are allowed in the string
+            string result = Regex.Replace(sourceString, "[^A-Za-z0-9 ]", "");
+            if(result.Length > 16) result.Substring(0, 16);
+            return result;
         }
 
         public void SaveChanges()

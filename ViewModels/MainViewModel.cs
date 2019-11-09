@@ -15,19 +15,6 @@ namespace JellyMusic.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private AppSettings _appSettings;
-        public AppSettings AppSettings
-        {
-            get => _appSettings;
-            set
-            {
-                if (_appSettings != null && _appSettings.Equals(value)) return;
-                _appSettings = value;
-                SaveAppSettings();
-            }
-        }
-        private readonly string _settingsPath = Path.Combine(Directory.GetCurrentDirectory(), @"Data\AppSettings.json");
-
         PlaylistsViewModel playlistsVM;
 
         public PlaybarViewModel _playbarVM;
@@ -49,50 +36,24 @@ namespace JellyMusic.ViewModels
 
         public MainViewModel()
         {
-            InitializeAppSettings();
             PlaybarVM = new PlaybarViewModel();
-            PlaybarVM.CurrentVolume = AppSettings.Volume;
-            PlaybarVM.OnVolumeChanged += () => AppSettings.Volume = PlaybarVM.CurrentVolume;
             InitializePlaylists();
         }
 
-        private void InitializeAppSettings()
-        {
-            if (!File.Exists(_settingsPath))
-            {
-                AppSettings = new AppSettings()
-                {
-                    LoadPlaylistOnStartupEnabled = true,
-                    StartupPlaylistName = "Default",
-                    Volume = 1,
-                    ShowVolumeSlider = true
-                };
-                JsonLite.SerializeToFile(_settingsPath, AppSettings);
-            }
-            AppSettings = JsonLite.DeserializeFromFile(_settingsPath, typeof(AppSettings)) as AppSettings;
-        }
         private void InitializePlaylists()
         {
             playlistsVM = new PlaylistsViewModel();
 
-            if (AppSettings.LoadPlaylistOnStartupEnabled)
+            if (playlistsVM.PlaylistsCollection.Any(item => item.Name == App.Settings.DefaultPlaylistName))
             {
-                if (playlistsVM.PlaylistsCollection.Any(item => item.Name == AppSettings.StartupPlaylistName))
-                {
-                    PlaybarVM.ActivePlaylist = playlistsVM.PlaylistsCollection.Single(item => item.Name == AppSettings.StartupPlaylistName);
-                }
-                else
-                {
-                    PlaybarVM.ActivePlaylist = new FolderBasedPlaylist(Environment.UserName + "'s music", Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
-                    playlistsVM.PlaylistsCollection.Add(PlaybarVM.ActivePlaylist);
-                    playlistsVM.SavePlaylist(PlaybarVM.ActivePlaylist, true);
-                }
+                PlaybarVM.ActivePlaylist = playlistsVM.PlaylistsCollection.Single(item => item.Name == App.Settings.DefaultPlaylistName);
             }
-        }
-
-        public void SaveAppSettings()
-        {
-            JsonLite.SerializeToFile(_settingsPath, AppSettings);
+            else
+            {
+                PlaybarVM.ActivePlaylist = new Playlist(App.Settings.DefaultPlaylistName, Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
+                playlistsVM.PlaylistsCollection.Add(PlaybarVM.ActivePlaylist);
+                playlistsVM.SavePlaylist(PlaybarVM.ActivePlaylist);
+            }
         }
 
         private void OnTrackChanged()

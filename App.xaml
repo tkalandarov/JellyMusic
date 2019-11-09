@@ -21,7 +21,7 @@
             <SolidColorBrush x:Key="Panel" Color="#262634" Opacity=".7"/>
 
             <SolidColorBrush x:Key="MainText" Color="White"/>
-            <SolidColorBrush x:Key="SecondaryText" Color="#FF9C9CB0"/>
+            <SolidColorBrush x:Key="SecondaryText" Color="#FFC2C2C9"/>
 
             <ControlTemplate x:Key="WaitControlTemplate">
                 <Grid>

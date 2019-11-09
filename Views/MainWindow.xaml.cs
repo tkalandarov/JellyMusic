@@ -31,7 +31,6 @@ namespace JellyMusic.Views
         private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.PlaybarVM.AudioPlayer?.Dispose();
-            ViewModel.SaveAppSettings();
             Close();
         }
 

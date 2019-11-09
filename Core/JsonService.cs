@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+
 using Newtonsoft.Json;
 
 namespace JellyMusic.Core
@@ -37,6 +37,7 @@ namespace JellyMusic.Core
     }
     public static class JsonLite
     {
+        // Serializers
         public static void SerializeToFile(string filePath, object objectToSerialize)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
@@ -48,10 +49,32 @@ namespace JellyMusic.Core
                 serializer.Serialize(file, objectToSerialize);
             }
         }
+        public static void SerializeToFile(FileStream fileStream, object objectToSerialize)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(fileStream.Name));
+
+            // serialize JSON directly to a file
+            using (StreamWriter file = new StreamWriter(fileStream))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, objectToSerialize);
+            }
+        }
+
+        // Deserializers
         public static object DeserializeFromFile(string filePath, Type typeOfFile)
         {
             // serialize JSON directly to a file
             using (StreamReader reader = File.OpenText(filePath))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                return serializer.Deserialize(reader, typeOfFile);
+            }
+        }
+        public static object DeserializeFromFile(FileStream fileStream, Type typeOfFile)
+        {
+            // serialize JSON directly to a file
+            using (StreamReader reader = new StreamReader(fileStream))
             {
                 JsonSerializer serializer = new JsonSerializer();
                 return serializer.Deserialize(reader, typeOfFile);

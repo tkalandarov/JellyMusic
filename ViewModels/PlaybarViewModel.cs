@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace JellyMusic.ViewModels
@@ -24,6 +25,7 @@ namespace JellyMusic.ViewModels
             {
                 if (value.Equals(_activePlaylist)) return;
                 _activePlaylist = value;
+
                 OnPlaylistChanged.Invoke();
             }
         }
@@ -38,6 +40,20 @@ namespace JellyMusic.ViewModels
 
                 _activeTrack = value;
                 OnTrackChanged.Invoke();
+            }
+        }
+        public ImageSource ActiveTrackPicture
+        {
+            get
+            {
+                if (ActiveTrack != null)
+                {
+                    using (TagReader tagReader = new TagReader(ActiveTrack.FilePath))
+                    {
+                        return tagReader.GetAlbumPictureSource(300, 300);
+                    }
+                }
+                return null;
             }
         }
 
@@ -69,17 +85,15 @@ namespace JellyMusic.ViewModels
 
         public TimeSpan Duration => AudioPlayer?.Duration ?? TimeSpan.Zero;
 
-        public float _currentVolume;
         public float CurrentVolume
         {
-            get { return _currentVolume; }
+            get => App.Settings.Volume;
             set
             {
 
-                if (value.Equals(_currentVolume)) return;
-                _currentVolume = value;
+                if (value.Equals(App.Settings.Volume)) return;
 
-                OnVolumeChanged?.Invoke();
+                App.Settings.Volume = value;
                 OnPropertyChanged(nameof(CurrentVolume));
             }
         }
@@ -105,7 +119,6 @@ namespace JellyMusic.ViewModels
 
         #region Events
 
-        public event Action OnVolumeChanged;
         public event Action OnTrackChanged;
         public event Action OnPlaylistChanged;
 
@@ -124,6 +137,7 @@ namespace JellyMusic.ViewModels
                 AudioPlayer.ChangeTrack(ActiveTrack.FilePath, IsPlaying);
 
                 OnPropertyChanged(nameof(ActiveTrack));
+                OnPropertyChanged(nameof(ActiveTrackPicture));
                 OnPropertyChanged(nameof(NextTrackTitle));
                 OnPropertyChanged(nameof(PreviousTrackTitle));
             };
@@ -132,7 +146,7 @@ namespace JellyMusic.ViewModels
                 if (ActivePlaylist.Tracks.Count > 0)
                 {
                     AudioPlayer.Pause();
-                    ActiveTrack = ActivePlaylist.Tracks.First();
+                    //ActiveTrack = ActivePlaylist.Tracks.First();
                 }
                 OnPropertyChanged(nameof(ActivePlaylist));
             };
@@ -235,6 +249,8 @@ namespace JellyMusic.ViewModels
                     {
                         ActivePlaylist.IsShuffled = !ActivePlaylist.IsShuffled;
                         OnPropertyChanged(nameof(IsShuffled));
+                        OnPropertyChanged(nameof(NextTrackTitle));
+                        OnPropertyChanged(nameof(PreviousTrackTitle));
                     },
                     canExecute:
                     obj =>

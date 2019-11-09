@@ -13,12 +13,18 @@ namespace JellyMusic.Models
 {
     // This attribute make serializer save only [JsonProperty] marked properties
     [JsonObject(MemberSerialization.OptIn)]
-    public abstract class Playlist : INotifyPropertyChanged
+    public class Playlist : INotifyPropertyChanged
     {
         #region Fields and Properties
 
         [JsonProperty]
         public string Name { get; protected set; }
+
+        [JsonProperty]
+        public string BaseFolderPath { get; private set; }
+
+        [JsonProperty]
+        public ICollection<string> TracksPaths { get; set; }
 
         public BindingList<PlaylistTrack> Tracks
         {
@@ -47,7 +53,7 @@ namespace JellyMusic.Models
             get
             {
                 TimeSpan result = TimeSpan.Zero;
-                foreach(var track in Tracks)
+                foreach (var track in Tracks)
                 {
                     result += track.TrackLength;
                 }
@@ -111,6 +117,17 @@ namespace JellyMusic.Models
 
         #endregion
 
+        public Playlist(string Name, string BaseFolderPath = null, params string[] TracksPaths)
+        {
+            this.Name = Name;
+            this.BaseFolderPath = BaseFolderPath;
+            if (String.IsNullOrEmpty(BaseFolderPath))
+            {
+                this.TracksPaths = TracksPaths;
+            }
+            LoadTracks();
+        }
+
         #region Methods
 
         private void Shuffle()
@@ -138,7 +155,7 @@ namespace JellyMusic.Models
             }
         }
 
-        public void LoadTracks(IEnumerable<string> filesPaths)
+        public void LoadTracks()
         {
             if (Tracks == null)
             {
@@ -149,7 +166,8 @@ namespace JellyMusic.Models
                     AllowEdit = true
                 };
             }
-            foreach (var path in filesPaths)
+            foreach (var path in String.IsNullOrEmpty(BaseFolderPath) ? 
+                TracksPaths : IOService.GetFilesByExtensions(BaseFolderPath, SearchOption.AllDirectories, ".mp3"))
             {
                 using (TagReader tagReader = new TagReader(path))
                 {
@@ -160,42 +178,12 @@ namespace JellyMusic.Models
 
         #endregion
 
+        #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName]string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
-    public class FolderBasedPlaylist : Playlist
-    {
-        [JsonProperty]
-        public readonly string FolderPath;
-
-        #region Constructors
-        public FolderBasedPlaylist(string Name, string FolderPath)
-        {
-            this.Name = Name;
-            this.FolderPath = FolderPath;
-
-            IEnumerable<string> audioFiles = IOService.GetFilesByExtensions(FolderPath, SearchOption.AllDirectories, ".mp3");
-            base.LoadTracks(audioFiles);
-        }
-
-        #endregion
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
-    public class CustomPlaylist : Playlist
-    {
-        #region Constructors
-        public CustomPlaylist(string Name, params string[] files)
-        {
-            this.Name = Name;
-            base.LoadTracks(files);
-        }
-
         #endregion
     }
 }
