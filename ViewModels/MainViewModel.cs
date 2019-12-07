@@ -15,7 +15,7 @@ namespace JellyMusic.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        PlaylistsViewModel playlistsVM;
+        public PlaylistsViewModel playlistsVM;
 
         public PlaybarViewModel _playbarVM;
         public PlaybarViewModel PlaybarVM
@@ -30,7 +30,7 @@ namespace JellyMusic.ViewModels
             }
         }
 
-        public PlaylistTrack ActiveTrack => PlaybarVM.ActiveTrack;
+        public AudioFile ActiveTrack => PlaybarVM.ActiveTrack;
 
         public BindingList<Playlist> PlaylistsCollection => playlistsVM?.PlaylistsCollection;
 
@@ -50,8 +50,9 @@ namespace JellyMusic.ViewModels
             }
             else
             {
-                PlaybarVM.ActivePlaylist = new Playlist(App.Settings.DefaultPlaylistName, Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
-                playlistsVM.PlaylistsCollection.Add(PlaybarVM.ActivePlaylist);
+                playlistsVM.AddPlaylist(App.Settings.DefaultPlaylistName, Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
+
+                PlaybarVM.ActivePlaylist = PlaylistsCollection.Single(x => x.Name == App.Settings.DefaultPlaylistName);
                 playlistsVM.SavePlaylist(PlaybarVM.ActivePlaylist);
             }
         }

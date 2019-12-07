@@ -29,9 +29,8 @@ namespace JellyMusic
         }
         protected override void OnExit(ExitEventArgs e)
         {
-            base.OnExit(e);
-
             SettingsFileStream.Close();
+            base.OnExit(e);
         }
 
         private void InitializeAppSettings()

@@ -69,9 +69,9 @@ namespace JellyMusic.Core
             }
         }
 
-        public PlaylistTrack GetPlaylistTrack()
+        public AudioFile GetPlaylistTrack()
         {
-            return new PlaylistTrack
+            return new AudioFile
             {
                 Id = GenerateId(),
                 FilePath = FilePath,
@@ -92,7 +92,7 @@ namespace JellyMusic.Core
         }
 
         // Generate a unique identification string
-        private string GenerateId()
+        public string GenerateId()
         {
             string sourceString = Album + Title + Performer + Year;
 

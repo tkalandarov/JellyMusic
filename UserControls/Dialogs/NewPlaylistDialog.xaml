@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="JellyMusic.UserControls.NewPlaylistDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="600"
+             
+             TextElement.Foreground="White"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="15"
+             TextOptions.TextFormattingMode="Ideal" 
+             FontFamily="Open Sans">
+
+    <Grid>
+        <Rectangle Fill="{StaticResource NonTransparentPanel}" Opacity=".8" 
+                   RadiusX="20" RadiusY="20"/>
+        <StackPanel>
+            <TextBlock Foreground="{StaticResource MainText}" 
+                   FontSize="35"
+                   Padding="20"
+                   Text="NEW PLAYLIST"
+                   HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <TextBlock Text="Name:"
+                   FontSize="20" 
+                   Foreground="{StaticResource SecondaryText}"
+                   HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <TextBox x:Name="NewPlaylistName"
+                             Width="300"
+                             FontSize="25"
+                             TextAlignment="Center"
+                     Margin="0,0,0,40"/>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <TextBlock Text="Folder Based"
+                           FontSize="25"/>
+                <ToggleButton x:Name="TypeToggle" Margin="20,0"/>
+                <TextBlock Text="Select Files"
+                           FontSize="25"/>
+            </StackPanel>
+        </StackPanel>
+
+        <Button x:Name="CreateBttn"
+                Content="CREATE"
+                Width="250" Height="80"
+                FontSize="25" Foreground="{StaticResource MainText}"
+                Style="{DynamicResource MaterialDesignFlatButton}" 
+                HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                Margin="20"/>
+        <Button x:Name="CancelBttn"
+                Content="CANCEL"
+                Width="250" Height="80"
+                FontSize="25" Foreground="{StaticResource MainText}"
+                Style="{DynamicResource MaterialDesignFlatButton}" 
+                HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Margin="20" Click="CancelBttn_Click"/>
+
+    </Grid>
+</UserControl>

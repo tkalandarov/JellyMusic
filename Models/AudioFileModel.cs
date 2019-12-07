@@ -10,17 +10,22 @@ using PropertyChanged;
 
 namespace JellyMusic.Models
 {
-    abstract public class AudioFile
-    {
-        public string FilePath { get; set; }
-        public DateTime LastModified { get; set; }
-        public TimeSpan TrackLength { get; set; }
-    }
-
-    [AddINotifyPropertyChangedInterface]
-    public class PlaylistTrack : AudioFile
+    [AddINotifyPropertyChangedInterface, JsonObject(MemberSerialization.OptIn)]
+    public class AudioFile
     {
         // General info
+        private string filePath;
+        [JsonProperty]
+        public string FilePath
+        {
+            get => filePath;
+            set
+            {
+                filePath = value;
+                OnFilePathChanged();
+            }
+        }
+
         public string Title { get; set; }
         public string Performer { get; set; }
         public string Genre { get; set; }
@@ -28,6 +33,9 @@ namespace JellyMusic.Models
 
         public string Lyrics { get; set; }
         public ImageSource AlbumPictureSource { get; set; }
+
+        public DateTime LastModified { get; set; }
+        public TimeSpan TrackLength { get; set; }
 
         // Album info
         public string Album { get; set; }
@@ -40,5 +48,25 @@ namespace JellyMusic.Models
         // Realization of id-gen is in JellyMusic.Core.TagReader
         public string Id { get; set; }
         public byte Rating { get; set; }
+
+        private void OnFilePathChanged()
+        {
+            using (TagReader reader = new TagReader(FilePath))
+            {
+                Title = reader.Title;
+                Performer = reader.Performer;
+                Genre = reader.Genre;
+                Year = reader.Year;
+
+                Album = reader.Album;
+                PositionInAlbum = reader.PositionInAlbum;
+                AlbumTrackCount = reader.AlbumTrackCount;
+
+                LastModified = reader.LastModified;
+                TrackLength = reader.TrackLength;
+
+                Id = reader.GenerateId();
+            }
+        }
     }
 }

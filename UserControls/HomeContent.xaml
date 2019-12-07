@@ -19,8 +19,9 @@
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="3*"/>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="8*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Vertical" 
                         Grid.Row="0"
@@ -39,8 +40,25 @@
                        TextAlignment="Right"
                        FontSize="30"/>
             </StackPanel>
+            <Grid Grid.Row="1" Margin="5">
+                <Rectangle Fill="{StaticResource Panel}" RadiusX="10" RadiusY="10"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Button x:Name="PlaylistsSort"
+                            Style="{StaticResource MaterialDesignToolButton}" 
+                            Height="Auto" Width="50">
+                        <materialDesign:PackIcon Kind="SortVariant" Width="Auto" Height="Auto"/>
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="GoToActive" Click="GoToActive_Click" 
+                            Style="{StaticResource MaterialDesignToolButton}" 
+                            Height="Auto" Width="50">
+                        <materialDesign:PackIcon Kind="MapMarkerCheck" Width="Auto" Height="Auto"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
             <ListBox x:Name="TracksListBox"
-                     Grid.Row="1"
+                     Grid.Row="2"
                      ItemsSource="{Binding PlaybarVM.ActivePlaylist.Tracks, IsAsync=True}"
                      SelectedItem="{Binding PlaybarVM.ActiveTrack, Mode=TwoWay}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">

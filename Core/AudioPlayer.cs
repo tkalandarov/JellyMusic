@@ -84,7 +84,8 @@ namespace JellyMusic.Core
         public void Stop()
         {
             _waveOut?.Stop();
-            _mediaReader.Position = 0;
+            if (_mediaReader != null)
+                _mediaReader.Position = 0;
 
             _progressUpdateTimer.Stop();
         }
@@ -95,7 +96,7 @@ namespace JellyMusic.Core
 
         public void Play()
         {
-            if(PlaybackState == PlaybackState.Paused)
+            if (PlaybackState == PlaybackState.Paused)
             {
                 PlaybackResumed.Invoke();
             }

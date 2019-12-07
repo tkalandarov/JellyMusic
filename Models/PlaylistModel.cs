@@ -23,10 +23,7 @@ namespace JellyMusic.Models
         [JsonProperty]
         public string BaseFolderPath { get; private set; }
 
-        [JsonProperty]
-        public ICollection<string> TracksPaths { get; set; }
-
-        public BindingList<PlaylistTrack> Tracks
+        public BindingList<AudioFile> Tracks
         {
             get
             {
@@ -47,7 +44,6 @@ namespace JellyMusic.Models
                 OnPropertyChanged(nameof(Tracks));
             }
         }
-
         public TimeSpan TotalDuration
         {
             get
@@ -61,26 +57,28 @@ namespace JellyMusic.Models
             }
         }
 
-        private BindingList<PlaylistTrack> OrderedSequence { get; set; }
-        private BindingList<PlaylistTrack> ShuffledSequence { get; set; }
+        [JsonProperty]
+        private BindingList<AudioFile> OrderedSequence { get; set; }
+        private BindingList<AudioFile> ShuffledSequence { get; set; }
 
-        public bool IsFirstTrack(PlaylistTrack SelectedTrack)
+        public bool IsFirstTrack(AudioFile SelectedTrack)
         {
             return Tracks.IndexOf(SelectedTrack) == 0;
         }
-        public bool IsLastTrack(PlaylistTrack SelectedTrack)
+        public bool IsLastTrack(AudioFile SelectedTrack)
         {
             return Tracks.IndexOf(SelectedTrack) == Tracks.Count - 1;
         }
 
-        public PlaylistTrack NextTrack(PlaylistTrack CurrentTrack)
+        public AudioFile NextTrack(AudioFile CurrentTrack)
         {
             if (CurrentTrack == null) return null;
             return IsLastTrack(CurrentTrack) ? null : Tracks[Tracks.IndexOf(CurrentTrack) + 1];
         }
-        public PlaylistTrack PreviousTrack(PlaylistTrack CurrentTrack)
+        public AudioFile PreviousTrack(AudioFile CurrentTrack)
         {
             if (CurrentTrack == null) return null;
+            if (Tracks.IndexOf(CurrentTrack) < 0) return null;
             return IsFirstTrack(CurrentTrack) ? null : Tracks[Tracks.IndexOf(CurrentTrack) - 1];
         }
 
@@ -117,15 +115,24 @@ namespace JellyMusic.Models
 
         #endregion
 
-        public Playlist(string Name, string BaseFolderPath = null, params string[] TracksPaths)
+        [JsonConstructor]
+        public Playlist(string Name, string BaseFolderPath = null, params AudioFile[] TracksToAdd)
         {
             this.Name = Name;
             this.BaseFolderPath = BaseFolderPath;
-            if (String.IsNullOrEmpty(BaseFolderPath))
+
+            OrderedSequence = new BindingList<AudioFile>();
+            ShuffledSequence = new BindingList<AudioFile>();
+
+            if (TracksToAdd != null)
             {
-                this.TracksPaths = TracksPaths;
+                foreach (var track in TracksToAdd)
+                    OrderedSequence.Add(track);
             }
-            LoadTracks();
+
+
+            if (BaseFolderPath != null)
+                LoadTracksFromFolder();
         }
 
         #region Methods
@@ -133,7 +140,7 @@ namespace JellyMusic.Models
         private void Shuffle()
         {
             Random rnd = new Random();
-            ShuffledSequence = new BindingList<PlaylistTrack>(OrderedSequence.OrderBy(item => rnd.Next()).ToList());
+            ShuffledSequence = new BindingList<AudioFile>(OrderedSequence.OrderBy(item => rnd.Next()).ToList());
         }
 
         private void ChangeSortingMethod(TrackSortingMethod sortingMethod)
@@ -155,23 +162,13 @@ namespace JellyMusic.Models
             }
         }
 
-        public void LoadTracks()
+        public void LoadTracksFromFolder()
         {
-            if (Tracks == null)
-            {
-                Tracks = new BindingList<PlaylistTrack>()
-                {
-                    AllowNew = true,
-                    AllowRemove = true,
-                    AllowEdit = true
-                };
-            }
-            foreach (var path in String.IsNullOrEmpty(BaseFolderPath) ? 
-                TracksPaths : IOService.GetFilesByExtensions(BaseFolderPath, SearchOption.AllDirectories, ".mp3"))
+            foreach (var path in IOService.GetFilesByExtensions(BaseFolderPath, SearchOption.AllDirectories, ".mp3"))
             {
                 using (TagReader tagReader = new TagReader(path))
                 {
-                    Tracks.Add(tagReader.GetPlaylistTrack());
+                    OrderedSequence.Add(tagReader.GetPlaylistTrack());
                 }
             }
         }

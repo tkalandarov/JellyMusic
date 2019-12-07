@@ -32,7 +32,7 @@ namespace JellyMusic.Views
         public void SetViewModel(PlaybarViewModel viewModel)
         {
             ViewModel = viewModel;
-            DataContext = viewModel;
+            DataContext = ViewModel;
         }
 
         private void ProgressBar_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)

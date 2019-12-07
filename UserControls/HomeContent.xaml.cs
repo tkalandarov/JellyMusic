@@ -24,5 +24,10 @@ namespace JellyMusic.UserControls
         {
             InitializeComponent();
         }
+
+        private void GoToActive_Click(object sender, RoutedEventArgs e)
+        {
+            TracksListBox.ScrollIntoView(TracksListBox.SelectedItem);
+        }
     }
 }

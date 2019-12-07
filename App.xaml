@@ -19,6 +19,7 @@
             </RadialGradientBrush>
 
             <SolidColorBrush x:Key="Panel" Color="#262634" Opacity=".7"/>
+            <SolidColorBrush x:Key="NonTransparentPanel" Color="#262634"/>
 
             <SolidColorBrush x:Key="MainText" Color="White"/>
             <SolidColorBrush x:Key="SecondaryText" Color="#FFC2C2C9"/>

@@ -132,7 +132,7 @@
             <!-- Content Area -->
             <materialDesign:Transitioner x:Name="ContentTransitioner" SelectedIndex="0"
                                              Grid.Row="1" Grid.Column="1" Margin="10">
-                <uc:HomeContent/>
+                <uc:HomeContent x:Name="HomeContent"/>
                 
                 <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
 
@@ -140,13 +140,18 @@
                         <materialDesign:SlideOutWipe/>
                     </materialDesign:TransitionerSlide.BackwardWipe>
 
-                    <uc:PlaylistsContent/>
+                    <uc:PlaylistsContent x:Name="PlaylistContent"/>
 
                 </materialDesign:TransitionerSlide>
             </materialDesign:Transitioner>
             <!-- Media control -->
             <Views:PlaybarView x:Name="Playbar"
                   Grid.Row="2" Grid.ColumnSpan="2"/>
+            <uc:NewPlaylistDialog x:Name="NewPlaylistDialog"
+                                  Visibility="Collapsed"
+                                  Width="600" Height="360" 
+                                  Grid.ColumnSpan="3" Grid.RowSpan="2"
+                                  materialDesign:ShadowAssist.ShadowDepth="Depth4"/>
         </Grid>
     </Border>
 </Window>
