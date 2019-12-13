@@ -3,69 +3,64 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows.Threading;
 using JellyMusic.Core;
-using JellyMusic.Models;
+using JellyMusic.EventArguments;
 
 namespace JellyMusic.ViewModels
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : BaseNotifyPropertyChanged
     {
-        public PlaylistsViewModel playlistsVM;
+        #region Fields and Properties
+        public PlaylistsViewModel PlaylistsVM { get; private set; }
+        public PlaybarViewModel PlaybarVM { get; private set; }
 
-        public PlaybarViewModel _playbarVM;
-        public PlaybarViewModel PlaybarVM
-        {
-            get => _playbarVM;
-            set
-            {
-                if (_playbarVM != null && _playbarVM.Equals(value)) return;
+        private string _ratingsPath = Directory.GetCurrentDirectory() + @"\DATA\Ratings.json";
 
-                _playbarVM = value;
-                _playbarVM.OnTrackChanged += OnTrackChanged;
-            }
-        }
-
-        public AudioFile ActiveTrack => PlaybarVM.ActiveTrack;
-
-        public BindingList<Playlist> PlaylistsCollection => playlistsVM?.PlaylistsCollection;
+        public Dictionary<string, byte> TracksRatings;  //Contains TrackId-Rating pair
+        #endregion
 
         public MainViewModel()
         {
             PlaybarVM = new PlaybarViewModel();
-            InitializePlaylists();
+            PlaylistsVM = new PlaylistsViewModel() { EnableRatingsUpdateRequests = false };
+
+            InitializeTracksRatings();
+
+            PlaylistsVM.EnableRatingsUpdateRequests = true;
+
+            PlaylistsVM.RatingsUpdateRequested += (object sender, TrackRatingUpdatedEventArgs e) =>
+            {
+                TracksRatings[e.TrackId] = e.NewRating;
+                JsonLite.SerializeToFile(_ratingsPath, TracksRatings);
+            };
+
+            Console.WriteLine(PlaylistsVM.AllTracks.Where(x => x.Title == "One More Night").Count());
         }
 
-        private void InitializePlaylists()
+        private void InitializeTracksRatings()
         {
-            playlistsVM = new PlaylistsViewModel();
-
-            if (playlistsVM.PlaylistsCollection.Any(item => item.Name == App.Settings.DefaultPlaylistName))
+            if (!File.Exists(_ratingsPath))
             {
-                PlaybarVM.ActivePlaylist = playlistsVM.PlaylistsCollection.Single(item => item.Name == App.Settings.DefaultPlaylistName);
+                TracksRatings = new Dictionary<string, byte>();
+                foreach (var track in PlaylistsVM.AllTracks)
+                {
+                    TracksRatings.Add(track.Id, track.Rating);
+                }
+                JsonLite.SerializeToFile(_ratingsPath, TracksRatings);
             }
             else
             {
-                playlistsVM.AddPlaylist(App.Settings.DefaultPlaylistName, Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
-
-                PlaybarVM.ActivePlaylist = PlaylistsCollection.Single(x => x.Name == App.Settings.DefaultPlaylistName);
-                playlistsVM.SavePlaylist(PlaybarVM.ActivePlaylist);
+                LoadTracksRatings();
             }
         }
-
-        private void OnTrackChanged()
+        private void LoadTracksRatings()
         {
-            OnPropertyChanged(nameof(ActiveTrack));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            TracksRatings = JsonLite.DeserializeFromFile(_ratingsPath, typeof(Dictionary<string, byte>)) as Dictionary<string, byte>;
+            foreach (var track in PlaylistsVM.AllTracks.Where(x => TracksRatings.ContainsKey(x.Id)))
+            {
+                track.Rating = TracksRatings.Single(x => x.Key == track.Id).Value;
+            }
         }
     }
 }

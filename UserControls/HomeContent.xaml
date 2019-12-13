@@ -29,19 +29,19 @@
                         HorizontalAlignment="Left">
                 <TextBlock Text="PLAYING NOW"
                        FontSize="25"
-                       Foreground="{StaticResource MainText}"/>
+                       Foreground="{StaticResource Text.Main}"/>
                 <Viewbox MaxHeight="100">
-                    <TextBlock Text="{Binding ActiveTrack.Title}"
-                           Foreground="{StaticResource MainText}"
+                    <TextBlock Text="{Binding PlaybarVM.ActiveTrack.Title}"
+                           Foreground="{StaticResource Text.Main}"
                            FontSize="50"
                            TextWrapping="Wrap"/>
                 </Viewbox>
-                <TextBlock Text="{Binding ActiveTrack.Performer}"
+                <TextBlock Text="{Binding PlaybarVM.ActiveTrack.Performer}"
                        TextAlignment="Right"
                        FontSize="30"/>
             </StackPanel>
             <Grid Grid.Row="1" Margin="5">
-                <Rectangle Fill="{StaticResource Panel}" RadiusX="10" RadiusY="10"/>
+                <Rectangle Fill="{StaticResource Panel.Semitransparent}" RadiusX="10" RadiusY="10"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                     <Button x:Name="PlaylistsSort"
                             Style="{StaticResource MaterialDesignToolButton}" 
@@ -59,7 +59,7 @@
             </Grid>
             <ListBox x:Name="TracksListBox"
                      Grid.Row="2"
-                     ItemsSource="{Binding PlaybarVM.ActivePlaylist.Tracks, IsAsync=True}"
+                     ItemsSource="{Binding PlaybarVM.PlaybackQueue, IsAsync=True}"
                      SelectedItem="{Binding PlaybarVM.ActiveTrack, Mode=TwoWay}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.ItemTemplate>
@@ -78,7 +78,7 @@
                             </Border>
                             <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,5" Grid.ColumnSpan="2">
                                 <TextBlock Text="{Binding Title}" FontSize="20" TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Text="{Binding Performer}" FontSize="20" Foreground="{StaticResource SecondaryText}" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{Binding Performer}" FontSize="20" Foreground="{StaticResource Text.Secondary}" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Grid>
                     </DataTemplate>
@@ -107,7 +107,8 @@
                                                     Stretch="UniformToFill"/>
                 </Border.Background>
             </Border>
-            <materialDesign:RatingBar Value="{Binding ActiveTrack.Rating, TargetNullValue=0, Mode=TwoWay}" 
+            <materialDesign:RatingBar x:Name="RatingBar"
+                                      Value="{Binding PlaybarVM.ActiveTrack.Rating, TargetNullValue=0, Mode=TwoWay}" 
                                       Orientation="Horizontal"
                                       VerticalAlignment="Bottom"
                                       HorizontalAlignment="Center"/>

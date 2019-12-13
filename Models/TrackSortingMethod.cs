@@ -2,6 +2,6 @@
 {
     public enum TrackSortingMethod
     {
-        ByTitle, ByPerformer, ByDateAdded, ByRating, CustomOrder
+        ByTitle, ByPerformer, ByDateAdded, ByRating
     }
 }

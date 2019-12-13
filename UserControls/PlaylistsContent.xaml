@@ -30,7 +30,7 @@
             </Grid.RowDefinitions>
             <Grid x:Name="PlaylistControlPanel"
                                       Grid.Row="0" Margin="0,5">
-                <Rectangle Fill="{StaticResource Panel}" RadiusX="10" RadiusY="10"/>
+                <Rectangle Fill="{StaticResource Panel.Semitransparent}" RadiusX="10" RadiusY="10"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                     <Button x:Name="PlaylistsSort"
                             Style="{StaticResource MaterialDesignToolButton}" 
@@ -48,7 +48,7 @@
             </Grid>
             <ListBox x:Name="PlaylistsListBox"
                      Grid.Row="1"
-                     ItemsSource="{Binding PlaylistsCollection, IsAsync=True}"
+                     ItemsSource="{Binding PlaylistsVM.PlaylistsCollection, IsAsync=True}"
                      SelectedItem="{Binding PlaybarVM.ActivePlaylist, Mode=TwoWay}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.RowSpan="3" >
                 <ListBox.ItemTemplate>
@@ -70,7 +70,7 @@
             </ListBox>
         </Grid>
         <Grid x:Name="PlaylistInfoPanel" Grid.Column="1">
-            <Rectangle Fill="{StaticResource Panel}"
+            <Rectangle Fill="{StaticResource Panel.Semitransparent}"
                        RadiusX="20" RadiusY="20"/>
             <Border x:Name="PlaylistPicture"
                     VerticalAlignment="Top" Margin="0,25"
@@ -85,7 +85,7 @@
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"
                                     Margin="10">
-                <TextBlock Text="{Binding StringFormat={}{0} Tracks, Path=PlaybarVM.ActivePlaylist.Tracks.Count}"
+                <TextBlock Text="{Binding StringFormat={}{0} Tracks, Path=PlaybarVM.ActivePlaylist.TrackList.Count}"
                                        FontSize="50"></TextBlock>
                 <TextBlock Text="{Binding PlaybarVM.ActivePlaylist.TotalDuration, Converter={StaticResource ToHoursAndMinsConverter}}"
                                        FontSize="20" TextAlignment="Right"></TextBlock>

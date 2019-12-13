@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-
+using JellyMusic.Core;
 using JellyMusic.Models;
 using JellyMusic.ViewModels;
 
@@ -14,21 +14,21 @@ namespace JellyMusic.Views
 {
     public partial class MainWindow : Window
     {
-        private MainViewModel ViewModel;
+        private MainViewModel MainVM;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            ViewModel = new MainViewModel();
-            Playbar.SetViewModel(ViewModel.PlaybarVM);
-            DataContext = ViewModel;
+            MainVM = new MainViewModel();
+            Playbar.SetViewModel(MainVM.PlaybarVM);
+
+            DataContext = MainVM;
 
             PlaylistContent.AddPlaylist.Click += (object sender, RoutedEventArgs e) =>
             {
                 NewPlaylistDialog.Visibility = Visibility.Visible;
             };
-
             NewPlaylistDialog.CreateBttn.Click += (object sender, RoutedEventArgs e) =>
             {
                 bool IsFolderBased = NewPlaylistDialog.TypeToggle.IsChecked != true;
@@ -43,7 +43,7 @@ namespace JellyMusic.Views
                         {
                             if (dialog.FileNames.Length == 0) return;
 
-                            ViewModel.playlistsVM.AddPlaylist(NewPlaylistDialog.NewPlaylistName.Text, dialog.FileNames);
+                            MainVM.PlaylistsVM.AddPlaylist(NewPlaylistDialog.NewPlaylistName.Text, dialog.FileNames);
                         }
                         else
                         {
@@ -58,7 +58,7 @@ namespace JellyMusic.Views
                         if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
                             if (Directory.GetFiles(dialog.SelectedPath, "*.mp3").Length == 0) return;
-                            ViewModel.playlistsVM.AddPlaylist(NewPlaylistDialog.NewPlaylistName.Text, dialog.SelectedPath);
+                            MainVM.PlaylistsVM.AddPlaylist(NewPlaylistDialog.NewPlaylistName.Text, dialog.SelectedPath);
                         }
                         else
                         {
@@ -68,16 +68,15 @@ namespace JellyMusic.Views
                 }
 
                 NewPlaylistDialog.CancelBttn_Click(null, null);
-                ViewModel.OnPropertyChanged("PlaylistsCollection");
+                //MainVM.OnPropertyChanged("PlaylistsCollection");
             };
         }
 
         private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.PlaybarVM.AudioPlayer?.Dispose();
+            MainVM.PlaybarVM.AudioPlayer?.Dispose();
             Close();
         }
-
         private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
@@ -93,40 +92,25 @@ namespace JellyMusic.Views
             Storyboard sb = FindResource("OpenSideMenu") as Storyboard;
             sb.Begin();
         }
-
         private void ButtonOpenSideMenu_Unchecked(object sender, RoutedEventArgs e)
         {
             Storyboard sb = FindResource("CloseSideMenu") as Storyboard;
             sb.Begin();
         }
 
-        private void PlaylistsCollection_IsMouseDirectlyOverChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            Console.WriteLine(e.NewValue.ToString());
-        }
-
         private void ItemHome_Selected(object sender, RoutedEventArgs e)
         {
             ContentTransitioner.SelectedIndex = 0;
         }
-
         private void ItemPlaylists_Selected(object sender, RoutedEventArgs e)
         {
             ContentTransitioner.SelectedIndex = 1;
         }
-
         private void ItemFavorite_Selected(object sender, RoutedEventArgs e)
         {
-
         }
-
         private void ItemSettings_Selected(object sender, RoutedEventArgs e)
         {
-
         }
-
-        #region Additional methods
-
-        #endregion
     }
 }

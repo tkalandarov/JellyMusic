@@ -20,7 +20,7 @@
         TextElement.FontSize="15"
         TextOptions.TextFormattingMode="Ideal" 
         FontFamily="Open Sans"
-        Background="{StaticResource BackgroundGradient}">
+        Background="{StaticResource Background.Gradient.Main}">
     <WindowChrome.WindowChrome>
         <WindowChrome 
             GlassFrameThickness="0" 
@@ -55,7 +55,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <!-- Background image -->
-            <Image Source="{Binding ActiveTrack.AlbumPictureSource}"
+            <Image Source="{Binding PlaybarVM.ActiveTrack.AlbumPictureSource}"
                    Grid.ColumnSpan="2" Grid.RowSpan="3" 
                    Stretch="UniformToFill"
                    Opacity=".5">
@@ -66,8 +66,8 @@
             <!-- Title Bar -->
             <Grid MouseDown="OnDragMoveWindow"
                   Grid.Row="0" Grid.ColumnSpan="2">
-                <Rectangle Fill="{StaticResource Panel}"/>
-                <TextBlock Text="JellyMusic"
+                <Rectangle Fill="{StaticResource Panel.Semitransparent}"/>
+                <TextBlock Text="JellyMusic (Designed and created by Timur Kalandarov)"
                            HorizontalAlignment="Left" Margin="15,0"
                            VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" 
@@ -90,7 +90,7 @@
                   Grid.Row="1" Grid.Column="0"
                   HorizontalAlignment="Left"
                   Width="60">
-                <Rectangle Fill="{StaticResource Panel}"/>
+                <Rectangle Fill="{StaticResource Panel.Semitransparent}"/>
                 <StackPanel>
                     <ToggleButton x:Name="ButtonOpenSideMenu"
                                   Style="{DynamicResource  MaterialDesignHamburgerToggleButton}"

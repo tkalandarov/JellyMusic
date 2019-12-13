@@ -93,11 +93,13 @@
     <Compile Include="Converters\TimeSpanToHrsAndMinsConverter.cs" />
     <Compile Include="Converters\TimeSpanToMinAndSecConverter.cs" />
     <Compile Include="Converters\TimeSpanToSecondsConverter.cs" />
-    <Compile Include="Core\JsonService.cs" />
-    <Compile Include="Core\PictureCachingService.cs" />
-    <Compile Include="Core\SerializingService.cs" />
-    <Compile Include="Core\IOService.cs" />
-    <Compile Include="Core\RelayCommand.cs" />
+    <Compile Include="Core\MVVM\BaseNotifyPropertyChanged.cs" />
+    <Compile Include="Core\Storage\JsonService.cs" />
+    <Compile Include="Core\Storage\PictureCachingService.cs" />
+    <Compile Include="Core\Storage\SerializingService.cs" />
+    <Compile Include="Core\Storage\IOService.cs" />
+    <Compile Include="Core\MVVM\RelayCommand.cs" />
+    <Compile Include="EventArguments\TrackRatingUpdatedEventArgs.cs" />
     <Compile Include="Models\AppSettings.cs" />
     <Compile Include="UserControls\Dialogs\NewPlaylistDialog.xaml.cs">
       <DependentUpon>NewPlaylistDialog.xaml</DependentUpon>
@@ -148,7 +150,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\PlayerState.cs" />
     <Compile Include="Models\PlaylistModel.cs" />
     <Compile Include="Models\TrackSortingMethod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -179,18 +180,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\Without_You.jpg" />
+    <Folder Include="Assets\" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\I_Love_It.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Screenshot %283%29.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Screenshot %284%29.png" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\ShowMeTheXAML.MSBuild.1.1.0-ci71\build\ShowMeTheXAML.MSBuild.targets" Condition="Exists('packages\ShowMeTheXAML.MSBuild.1.1.0-ci71\build\ShowMeTheXAML.MSBuild.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

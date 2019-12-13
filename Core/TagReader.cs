@@ -94,12 +94,12 @@ namespace JellyMusic.Core
         // Generate a unique identification string
         public string GenerateId()
         {
-            string sourceString = Album + Title + Performer + Year;
+            string sourceString = Album + Performer + Year;
 
             // only space, capital A-Z, lowercase a-z, and digits 0-9 are allowed in the string
             string result = Regex.Replace(sourceString, "[^A-Za-z0-9 ]", "");
-            if(result.Length > 16) result.Substring(0, 16);
-            return result;
+            if (result.Length > 12) result.Substring(0, 12);
+            return result.Replace(" ", "");
         }
 
         public void SaveChanges()

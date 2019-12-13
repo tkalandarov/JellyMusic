@@ -13,19 +13,29 @@ using System.Windows.Threading;
 
 namespace JellyMusic.ViewModels
 {
-    public class PlaybarViewModel : INotifyPropertyChanged
+    public class PlaybarViewModel : BaseNotifyPropertyChanged
     {
-        #region Fields and properties
+        #region Fields
+        private BindingList<AudioFile> _trackList => ActivePlaylist?.TrackList;
 
         private Playlist _activePlaylist;
+        private AudioFile _activeTrack;
+
+        private bool _syncPlayer; // Used for syncronizing thumb drag control
+
+        private TimeSpan _currentProgress;
+        private bool _loop;
+        #endregion
+
+        #region Properties
+        public readonly AudioPlayer AudioPlayer;
+
         public Playlist ActivePlaylist
         {
             get => _activePlaylist;
             set
             {
-                if (Equals(_activePlaylist, value) || value == null) return;
-                _activePlaylist = value;
-
+                SetProperty(ref _activePlaylist, value);
                 OnPlaylistChanged.Invoke();
             }
         }
@@ -35,7 +45,7 @@ namespace JellyMusic.ViewModels
             {
                 if (ActivePlaylist != null)
                 {
-                    using (TagReader tagReader = new TagReader(ActivePlaylist?.Tracks.FirstOrDefault().FilePath))
+                    using (TagReader tagReader = new TagReader(_trackList.FirstOrDefault().FilePath))
                     {
                         return tagReader.GetAlbumPictureSource(300, 300);
                     }
@@ -44,16 +54,17 @@ namespace JellyMusic.ViewModels
             }
         }
 
+        public BindingList<AudioFile> PlaybackQueue => ActivePlaylist?.GetPlaybackQueue(IsShuffled);
 
-        private AudioFile _activeTrack;
         public AudioFile ActiveTrack
         {
             get => _activeTrack;
             set
             {
-                if (value == null || value.Equals(_activeTrack)) return;
+                if (value == null) return;
 
-                _activeTrack = value;
+                CurrentProgress = TimeSpan.Zero;
+                SetProperty(ref _activeTrack, value);
                 OnTrackChanged.Invoke();
             }
         }
@@ -70,34 +81,20 @@ namespace JellyMusic.ViewModels
                 }
                 return null;
             }
-        }
+        }        
 
-        public string NextTrackTitle => ActivePlaylist?.NextTrack(ActiveTrack)?.Title;
-        public string PreviousTrackTitle => ActivePlaylist?.PreviousTrack(ActiveTrack)?.Title;
-
-        public readonly AudioPlayer AudioPlayer;
-        // Used for smooth thumb drag control
-        private bool _syncPlayer;
-
-        private TimeSpan _currentProgress;
         public TimeSpan CurrentProgress
         {
             get => _currentProgress;
-
             set
             {
-                if (value.Equals(_currentProgress)) return;
-
-                _currentProgress = value;
-                OnPropertyChanged(nameof(CurrentProgress));
-
+                SetProperty(ref _currentProgress, value);
                 if (_syncPlayer)
                 {
                     AudioPlayer.Progress = value;
                 }
             }
         }
-
         public TimeSpan Duration => AudioPlayer?.Duration ?? TimeSpan.Zero;
 
         public float CurrentVolume
@@ -112,8 +109,6 @@ namespace JellyMusic.ViewModels
                 OnPropertyChanged(nameof(CurrentVolume));
             }
         }
-
-        private bool _loop;
         public bool Loop
         {
             get => _loop;
@@ -126,10 +121,11 @@ namespace JellyMusic.ViewModels
                 OnPropertyChanged(nameof(Loop));
             }
         }
-
         public bool IsPlaying => AudioPlayer?.PlaybackState == PlaybackState.Playing;
-        public bool IsShuffled => ActivePlaylist?.IsShuffled == true;
+        public bool IsShuffled { get; set; }
 
+        public string NextTrackTitle => GetNextTrack()?.Title;
+        public string PreviousTrackTitle => GetPreviousTrack()?.Title;
         #endregion
 
         #region Events
@@ -151,14 +147,14 @@ namespace JellyMusic.ViewModels
             {
                 AudioPlayer.ChangeTrack(ActiveTrack.FilePath, IsPlaying);
 
-                OnPropertyChanged(nameof(ActiveTrack));
+                OnPropertyChanged(nameof(Duration));
                 OnPropertyChanged(nameof(ActiveTrackPicture));
                 OnPropertyChanged(nameof(NextTrackTitle));
                 OnPropertyChanged(nameof(PreviousTrackTitle));
             };
             OnPlaylistChanged += () =>
             {
-                if (ActivePlaylist?.Tracks.Count > 0)
+                if (PlaybackQueue.Count > 0)
                 {
                     AudioPlayer.Pause();
 
@@ -166,7 +162,7 @@ namespace JellyMusic.ViewModels
                     OnPropertyChanged(nameof(CurrentProgress));
                     OnPropertyChanged(nameof(IsPlaying));
 
-                    ActiveTrack = ActivePlaylist.Tracks.First();
+                    ActiveTrack = PlaybackQueue.FirstOrDefault();
                 }
                 OnPropertyChanged(nameof(ActivePlaylist));
             };
@@ -180,7 +176,7 @@ namespace JellyMusic.ViewModels
 
         private void DebugOutput(object sender, EventArgs e)
         {
-            //Console.WriteLine(ActivePlaylist.Name);
+           // Console.WriteLine(ActiveTrack?.Rating);
         }
 
         #region Commands
@@ -194,6 +190,7 @@ namespace JellyMusic.ViewModels
         private ICommand _loopCommand;
         private ICommand _volumeControlValueChangedCommand;
 
+        // Realizations
         public ICommand PlayCommand
         {
             get
@@ -226,13 +223,13 @@ namespace JellyMusic.ViewModels
                         CurrentProgress = TimeSpan.Zero;
 
                         // if playback progress is less than 5 sec, go to previous track
-                        if (CurrentProgress.TotalSeconds < 5 && !ActivePlaylist.IsFirstTrack(ActiveTrack))
+                        if (CurrentProgress.TotalSeconds < 5 && !IsFirstTrackPlaying())
                         {
-                            ActiveTrack = ActivePlaylist.PreviousTrack(ActiveTrack);
+                            ActiveTrack = GetPreviousTrack();
                         }
                     },
                     canExecute:
-                    obj => ActiveTrack != null && (!ActivePlaylist.IsFirstTrack(ActiveTrack) || CurrentProgress.TotalSeconds >= 5)
+                    obj => ActiveTrack != null && (!IsFirstTrackPlaying() || CurrentProgress.TotalSeconds >= 5)
                     ));
             }
         }
@@ -247,12 +244,14 @@ namespace JellyMusic.ViewModels
                     obj =>
                     {
                         CurrentProgress = TimeSpan.Zero;
-                        ActiveTrack = ActivePlaylist.NextTrack(ActiveTrack);
+                        ActiveTrack = GetNextTrack();
+
+                        if (!IsPlaying) AudioPlayer.Play();
                     },
                     canExecute:
                     obj =>
                     {
-                        return ActiveTrack != null && !ActivePlaylist.IsLastTrack(ActiveTrack);
+                        return ActiveTrack != null && !IsLastTrackPlaying();
                     }
                     ));
             }
@@ -268,16 +267,11 @@ namespace JellyMusic.ViewModels
                     action:
                     obj =>
                     {
-                        ActivePlaylist.IsShuffled = !ActivePlaylist.IsShuffled;
+                        IsShuffled = !IsShuffled;
 
                         OnPropertyChanged(nameof(IsShuffled));
-                        OnPropertyChanged(nameof(NextTrackTitle));
-                        OnPropertyChanged(nameof(PreviousTrackTitle));
-                    },
-                    canExecute:
-                    obj =>
-                    {
-                        return true;
+                        OnPropertyChanged(nameof(GetNextTrack));
+                        OnPropertyChanged(nameof(GetPreviousTrack));
                     }
                     ));
             }
@@ -332,7 +326,8 @@ namespace JellyMusic.ViewModels
             {
                 if (_syncPlayer)
                 {
-                    _currentProgress = e.NewProgress;
+                    // Do not change property itself - it will break 'MoveToPoint' control and lead to sound stutter
+                    SetProperty(ref _currentProgress, e.NewProgress);
                     OnPropertyChanged(nameof(CurrentProgress));
                 }
 
@@ -341,10 +336,6 @@ namespace JellyMusic.ViewModels
                 {
                     CommandManager.InvalidateRequerySuggested();
                 }
-            };
-            AudioPlayer.TrackChanged += () =>
-            {
-                OnPropertyChanged(nameof(Duration));
             };
 
             AudioPlayer.PlaybackPaused += () => OnPropertyChanged(nameof(IsPlaying));
@@ -362,15 +353,33 @@ namespace JellyMusic.ViewModels
                     {
                         PlayNextCommand.Execute(null);
                     }
-                    else OnPropertyChanged(nameof(IsPlaying));
+                    else
+                    {
+                        AudioPlayer.Progress = TimeSpan.Zero;
+                        OnPropertyChanged(nameof(IsPlaying));
+                    }
                 }
             };
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public bool IsFirstTrackPlaying()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return PlaybackQueue.IndexOf(_activeTrack) == 0;
+        }
+        public bool IsLastTrackPlaying()
+        {
+            return PlaybackQueue.IndexOf(_activeTrack) == PlaybackQueue.Count - 1;
+        }
+
+        public AudioFile GetNextTrack()
+        {
+            if (_activeTrack == null) return null;
+            return IsLastTrackPlaying() ? null : PlaybackQueue[PlaybackQueue.IndexOf(_activeTrack) + 1];
+        }
+        public AudioFile GetPreviousTrack()
+        {
+            if (_activeTrack == null) return null;
+            return IsFirstTrackPlaying() ? null : PlaybackQueue[PlaybackQueue.IndexOf(_activeTrack) - 1];
         }
         #endregion
     }

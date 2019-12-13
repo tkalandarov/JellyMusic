@@ -1,6 +1,7 @@
 ﻿using JellyMusic.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Media.Imaging;
 
@@ -9,21 +10,22 @@ namespace JellyMusic.Core
     public class PictureCachingService
     {
         private readonly static string cachePath = Directory.GetCurrentDirectory() + @"\DATA\CACHE\";
-        private readonly static int picWidth = 75;
-        private readonly static int picHeight = 75;
+        private const int picWidth = 75;
+        private const int picHeight = 75;
 
-        private ICollection<AudioFile> tracks;
+        public readonly BindingList<AudioFile> Tracks;
 
-        public PictureCachingService(ICollection<AudioFile> tracks)
+        public PictureCachingService(BindingList<AudioFile> Tracks)
         {
             Directory.CreateDirectory(cachePath); // does nothing if folder already exists
 
-            this.tracks = tracks;
+            this.Tracks = Tracks;
         }
 
         public static void CacheSingle(AudioFile track)
         {
-            Console.WriteLine(track.Title);
+            Directory.CreateDirectory(cachePath); // does nothing if folder already exists
+
             using (TagReader reader = new TagReader(track.FilePath))
             {
                 string picPath = Path.Combine(cachePath, track.Id + ".png");
@@ -44,8 +46,9 @@ namespace JellyMusic.Core
 
         public void CacheAndAssign()
         {
-            foreach (var track in tracks)
+            foreach (var track in Tracks)
             {
+                if (track.AlbumPictureSource != null) continue;
                 CacheSingle(track);
             }
         }
@@ -55,15 +58,9 @@ namespace JellyMusic.Core
         {
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-            try
-            {
-                using (var filestream = new FileStream(picPath, FileMode.Create))
-                    encoder.Save(filestream);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+
+            using (var filestream = new FileStream(picPath, FileMode.Create))
+                encoder.Save(filestream);
         }
     }
 }

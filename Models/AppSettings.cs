@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using JellyMusic.Core;
 
 namespace JellyMusic.Models
 {
     [Serializable]
-    public class AppSettings
+    public class AppSettings : BaseNotifyPropertyChanged
     {
         private string defaultPlaylistName = "Default";
         public string DefaultPlaylistName
@@ -27,18 +28,5 @@ namespace JellyMusic.Models
             get => showVolumeSlider;
             set => SetProperty(ref showVolumeSlider, value);
         }
-
-
-        #region INotifyPropertyChanged
-        // OnProperyChanged Wrapper
-        protected void SetProperty<T>(ref T property, T value)
-        {
-            if (EqualityComparer<T>.Default.Equals(property, value))
-                return;
-
-            property = value;
-            JsonLite.SerializeToFile(App.SettingsPath, this);
-        }
-        #endregion
     }
 }

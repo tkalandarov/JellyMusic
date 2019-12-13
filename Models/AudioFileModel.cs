@@ -1,27 +1,27 @@
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.IO;
 using System.Windows.Media;
 
 using JellyMusic.Core;
+using JellyMusic.EventArguments;
 
 using Newtonsoft.Json;
-using PropertyChanged;
 
 namespace JellyMusic.Models
 {
-    [AddINotifyPropertyChangedInterface, JsonObject(MemberSerialization.OptIn)]
-    public class AudioFile
+    [JsonObject(MemberSerialization.OptIn)]
+    public class AudioFile : BaseNotifyPropertyChanged
     {
+        #region Fields and Properties
         // General info
-        private string filePath;
+        private string _filePath;
         [JsonProperty]
         public string FilePath
         {
-            get => filePath;
+            get => _filePath;
             set
             {
-                filePath = value;
+                SetProperty(ref _filePath, value);
                 OnFilePathChanged();
             }
         }
@@ -47,13 +47,26 @@ namespace JellyMusic.Models
         // Id is used for preventing caching same album pictures from different tracks several times
         // Realization of id-gen is in JellyMusic.Core.TagReader
         public string Id { get; set; }
-        public byte Rating { get; set; }
+
+        private byte _rating;
+        public byte Rating
+        {
+            get => _rating;
+            set
+            {
+                SetProperty(ref _rating, value);
+                OnRatingChanged.Invoke(this, new TrackRatingUpdatedEventArgs(Id, value));
+            }
+        }
+
+        public event EventHandler<TrackRatingUpdatedEventArgs> OnRatingChanged;
+        #endregion
 
         private void OnFilePathChanged()
         {
             using (TagReader reader = new TagReader(FilePath))
             {
-                Title = reader.Title;
+                Title = reader.Title ?? Path.GetFileNameWithoutExtension(_filePath);
                 Performer = reader.Performer;
                 Genre = reader.Genre;
                 Year = reader.Year;

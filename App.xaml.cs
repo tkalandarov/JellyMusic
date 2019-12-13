@@ -17,20 +17,23 @@ namespace JellyMusic
     /// </summary>
     public partial class App : Application
     {
-        public static readonly string SettingsPath = Path.Combine(Directory.GetCurrentDirectory(), @"DATA\AppSettings.json");
+        public readonly static string SettingsPath = Path.Combine(Directory.GetCurrentDirectory(), @"DATA\AppSettings.json");
         public static AppSettings Settings { get; private set; }
-        public static FileStream SettingsFileStream { get; private set; }
+
+        public App()
+        {
+            Dispatcher.UnhandledException += (sender, e) =>
+            {
+                e.Handled = true;
+                MessageBox.Show($"Operation unsuccessful.\n\n{e.Exception.Message}", "An Error Occurred", MessageBoxButton.OK, MessageBoxImage.Error);
+            };
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             InitializeAppSettings();
-        }
-        protected override void OnExit(ExitEventArgs e)
-        {
-            SettingsFileStream.Close();
-            base.OnExit(e);
         }
 
         private void InitializeAppSettings()
@@ -40,8 +43,7 @@ namespace JellyMusic
                 Settings = new AppSettings();
                 JsonLite.SerializeToFile(SettingsPath, Settings);
             }
-            SettingsFileStream = new FileStream(SettingsPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read);
-            Settings = JsonLite.DeserializeFromFile(SettingsFileStream, typeof(AppSettings)) as AppSettings;
+            Settings = JsonLite.DeserializeFromFile(SettingsPath, typeof(AppSettings)) as AppSettings;
         }
     }
 }

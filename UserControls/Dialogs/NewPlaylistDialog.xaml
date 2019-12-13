@@ -14,17 +14,17 @@
              FontFamily="Open Sans">
 
     <Grid>
-        <Rectangle Fill="{StaticResource NonTransparentPanel}" Opacity=".8" 
+        <Rectangle Fill="{StaticResource Panel.NonTransparent}" Opacity=".8" 
                    RadiusX="20" RadiusY="20"/>
         <StackPanel>
-            <TextBlock Foreground="{StaticResource MainText}" 
+            <TextBlock Foreground="{StaticResource Text.Main}" 
                    FontSize="35"
                    Padding="20"
                    Text="NEW PLAYLIST"
                    HorizontalAlignment="Center" VerticalAlignment="Top"/>
             <TextBlock Text="Name:"
                    FontSize="20" 
-                   Foreground="{StaticResource SecondaryText}"
+                   Foreground="{StaticResource Text.Secondary}"
                    HorizontalAlignment="Center" VerticalAlignment="Top"/>
             <TextBox x:Name="NewPlaylistName"
                              Width="300"
@@ -44,14 +44,14 @@
         <Button x:Name="CreateBttn"
                 Content="CREATE"
                 Width="250" Height="80"
-                FontSize="25" Foreground="{StaticResource MainText}"
+                FontSize="25" Foreground="{StaticResource Text.Main}"
                 Style="{DynamicResource MaterialDesignFlatButton}" 
                 HorizontalAlignment="Left" VerticalAlignment="Bottom"
                 Margin="20"/>
         <Button x:Name="CancelBttn"
                 Content="CANCEL"
                 Width="250" Height="80"
-                FontSize="25" Foreground="{StaticResource MainText}"
+                FontSize="25" Foreground="{StaticResource Text.Main}"
                 Style="{DynamicResource MaterialDesignFlatButton}" 
                 HorizontalAlignment="Right" VerticalAlignment="Bottom"
                 Margin="20" Click="CancelBttn_Click"/>

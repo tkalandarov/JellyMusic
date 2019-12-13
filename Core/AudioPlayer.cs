@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Windows.Media;
 using System.Windows.Threading;
 using JellyMusic.EventArguments;
-using JellyMusic.Models;
 using NAudio.Wave;
 
 namespace JellyMusic.Core
@@ -20,7 +18,6 @@ namespace JellyMusic.Core
         public PlaybackState PlaybackState { get => _waveOut?.PlaybackState ?? PlaybackState.Stopped; }
 
         public event EventHandler<ProgressUpdatedEventArgs> ProgressUpdated;
-        public event Action TrackChanged;
 
         public event Action PlaybackResumed;
         public event Action PlaybackStopped;
@@ -69,16 +66,13 @@ namespace JellyMusic.Core
             }
         }
 
-        public void ChangeTrack(string filePath, bool play)
+        public void ChangeTrack(string filePath, bool IsPlaying)
         {
             Dispose();
             InitializeOutput(filePath);
-            TrackChanged.Invoke();
 
-            if (play)
-            {
+            if (IsPlaying)
                 Play();
-            }
         }
 
         public void Stop()
