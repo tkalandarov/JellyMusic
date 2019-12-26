@@ -13,7 +13,7 @@ namespace JellyMusic.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return TimeSpan.FromSeconds((double)value);
+            return value == null ? TimeSpan.Zero : TimeSpan.FromSeconds((double)value);
         }
     }
 }

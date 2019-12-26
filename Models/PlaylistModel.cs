@@ -9,7 +9,7 @@ namespace JellyMusic.Models
 {
     // This attribute make serializer save only [JsonProperty] marked properties
     [JsonObject(MemberSerialization.OptIn)]
-    public class Playlist : BaseNotifyPropertyChanged
+    public class Playlist : BaseNotifyPropertyChanged, IComparable
     {
         #region Fields and Properties
 
@@ -115,6 +115,13 @@ namespace JellyMusic.Models
                     TrackList.Add(tagReader.GetPlaylistTrack());
                 }
             }
+        }
+
+        public int CompareTo(object obj)
+        {
+            Playlist another = obj as Playlist;
+            if (another == null) return -1;
+            return (this.Name.CompareTo(another.Name));
         }
         #endregion
     }

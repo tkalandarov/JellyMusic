@@ -81,7 +81,7 @@ namespace JellyMusic.ViewModels
                 }
                 return null;
             }
-        }        
+        }
 
         public TimeSpan CurrentProgress
         {
@@ -147,13 +147,11 @@ namespace JellyMusic.ViewModels
             {
                 AudioPlayer.ChangeTrack(ActiveTrack.FilePath, IsPlaying);
 
-                OnPropertyChanged(nameof(Duration));
-                OnPropertyChanged(nameof(ActiveTrackPicture));
-                OnPropertyChanged(nameof(NextTrackTitle));
-                OnPropertyChanged(nameof(PreviousTrackTitle));
+                UpdateActiveTrackView();
             };
             OnPlaylistChanged += () =>
             {
+                if (ActivePlaylist == null) return;
                 if (PlaybackQueue.Count > 0)
                 {
                     AudioPlayer.Pause();
@@ -176,7 +174,7 @@ namespace JellyMusic.ViewModels
 
         private void DebugOutput(object sender, EventArgs e)
         {
-           // Console.WriteLine(ActiveTrack?.Rating);
+            // Console.WriteLine(ActiveTrack?.Rating);
         }
 
         #region Commands
@@ -245,8 +243,6 @@ namespace JellyMusic.ViewModels
                     {
                         CurrentProgress = TimeSpan.Zero;
                         ActiveTrack = GetNextTrack();
-
-                        if (!IsPlaying) AudioPlayer.Play();
                     },
                     canExecute:
                     obj =>
@@ -352,6 +348,7 @@ namespace JellyMusic.ViewModels
                     if (PlayNextCommand.CanExecute(null))
                     {
                         PlayNextCommand.Execute(null);
+                        AudioPlayer.Play();
                     }
                     else
                     {
@@ -364,11 +361,11 @@ namespace JellyMusic.ViewModels
 
         public bool IsFirstTrackPlaying()
         {
-            return PlaybackQueue.IndexOf(_activeTrack) == 0;
+            return PlaybackQueue?.IndexOf(_activeTrack) == 0;
         }
         public bool IsLastTrackPlaying()
         {
-            return PlaybackQueue.IndexOf(_activeTrack) == PlaybackQueue.Count - 1;
+            return PlaybackQueue?.IndexOf(_activeTrack) == PlaybackQueue.Count - 1;
         }
 
         public AudioFile GetNextTrack()
@@ -380,6 +377,14 @@ namespace JellyMusic.ViewModels
         {
             if (_activeTrack == null) return null;
             return IsFirstTrackPlaying() ? null : PlaybackQueue[PlaybackQueue.IndexOf(_activeTrack) - 1];
+        }
+
+        private void UpdateActiveTrackView()
+        {
+            OnPropertyChanged(nameof(Duration));
+            OnPropertyChanged(nameof(ActiveTrackPicture));
+            OnPropertyChanged(nameof(NextTrackTitle));
+            OnPropertyChanged(nameof(PreviousTrackTitle));
         }
         #endregion
     }

@@ -67,7 +67,7 @@
             <Grid MouseDown="OnDragMoveWindow"
                   Grid.Row="0" Grid.ColumnSpan="2">
                 <Rectangle Fill="{StaticResource Panel.Semitransparent}"/>
-                <TextBlock Text="JellyMusic (Designed and created by Timur Kalandarov)"
+                <TextBlock Text="JellyMusic (Test Mode)"
                            HorizontalAlignment="Left" Margin="15,0"
                            VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" 

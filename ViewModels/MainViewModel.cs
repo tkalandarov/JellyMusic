@@ -34,8 +34,6 @@ namespace JellyMusic.ViewModels
                 TracksRatings[e.TrackId] = e.NewRating;
                 JsonLite.SerializeToFile(_ratingsPath, TracksRatings);
             };
-
-            Console.WriteLine(PlaylistsVM.AllTracks.Where(x => x.Title == "One More Night").Count());
         }
 
         private void InitializeTracksRatings()

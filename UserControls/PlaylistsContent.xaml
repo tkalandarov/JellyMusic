@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:Converters="clr-namespace:JellyMusic.Converters"
+             xmlns:models="clr-namespace:JellyMusic.Models"
              xmlns:local="clr-namespace:JellyMusic.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="511" d:DesignWidth="1112"
@@ -31,13 +32,6 @@
             <Grid x:Name="PlaylistControlPanel"
                                       Grid.Row="0" Margin="0,5">
                 <Rectangle Fill="{StaticResource Panel.Semitransparent}" RadiusX="10" RadiusY="10"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Button x:Name="PlaylistsSort"
-                            Style="{StaticResource MaterialDesignToolButton}" 
-                            Height="Auto" Width="50">
-                        <materialDesign:PackIcon Kind="SortVariant" Width="Auto" Height="Auto"/>
-                    </Button>
-                </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button x:Name="AddPlaylist" 
                             Style="{StaticResource MaterialDesignToolButton}" 

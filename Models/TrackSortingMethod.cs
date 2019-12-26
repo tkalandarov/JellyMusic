@@ -4,4 +4,8 @@
     {
         ByTitle, ByPerformer, ByDateAdded, ByRating
     }
+    public enum PlaylistSortingMethod
+    {
+        ByName, ByDuration
+    }
 }

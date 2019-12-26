@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 
-using PropertyChanged;
 using System.Linq;
+using System.Windows.Input;
 
 namespace JellyMusic.ViewModels
 {
-    [AddINotifyPropertyChangedInterface]
-    public class PlaylistsViewModel
+    public class PlaylistsViewModel : BaseNotifyPropertyChanged
     {
+        #region Fields and Properties
         public readonly string PlaylistsDir = Directory.GetCurrentDirectory() + @"\DATA\PLAYLISTS\";
 
         private readonly JsonService<Playlist> _serializer;
@@ -24,6 +24,7 @@ namespace JellyMusic.ViewModels
 
         public bool EnableRatingsUpdateRequests { get; set; }
         public event EventHandler<TrackRatingUpdatedEventArgs> RatingsUpdateRequested;
+        #endregion
 
         public PlaylistsViewModel()
         {
@@ -41,6 +42,7 @@ namespace JellyMusic.ViewModels
             PerformCaching();
         }
 
+        #region Methods
         private void LoadPlaylists()
         {
             foreach (string elem in IOService.GetFilesByExtensions(PlaylistsDir, SearchOption.TopDirectoryOnly, ".json"))
@@ -76,7 +78,6 @@ namespace JellyMusic.ViewModels
                 }
             }
         }
-
         private void PerformCaching()
         {
             PictureCachingService cachingService = new PictureCachingService(AllTracks);
@@ -121,7 +122,6 @@ namespace JellyMusic.ViewModels
             LoadAllTracks();
             PerformCaching();
         }
-
         private void SavePlaylist(Playlist playlist)
         {
             _serializer.SerializeToFile(playlist.Name + ".json", playlist);
@@ -132,5 +132,6 @@ namespace JellyMusic.ViewModels
             if (EnableRatingsUpdateRequests)
                 RatingsUpdateRequested.Invoke(sender, e);
         }
+        #endregion
     }
 }
