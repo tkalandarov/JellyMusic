@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Input;
 using System.Windows.Threading;
 using JellyMusic.Core;
 using JellyMusic.EventArguments;
@@ -23,6 +24,7 @@ namespace JellyMusic.ViewModels
         public MainViewModel()
         {
             PlaybarVM = new PlaybarViewModel();
+
             PlaylistsVM = new PlaylistsViewModel() { EnableRatingsUpdateRequests = false };
 
             InitializeTracksRatings();
@@ -34,7 +36,14 @@ namespace JellyMusic.ViewModels
                 TracksRatings[e.TrackId] = e.NewRating;
                 JsonLite.SerializeToFile(_ratingsPath, TracksRatings);
             };
+
+            PlaybarVM.OnTrackNotFound += (string path) =>
+            {
+                PlaylistsVM.AllTracks.Remove(PlaylistsVM.AllTracks.Single(x => x.FilePath == path));
+            };
         }
+
+        #region Methods
 
         private void InitializeTracksRatings()
         {
@@ -60,5 +69,7 @@ namespace JellyMusic.ViewModels
                 track.Rating = TracksRatings.Single(x => x.Key == track.Id).Value;
             }
         }
+
+        #endregion
     }
 }

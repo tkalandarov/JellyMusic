@@ -112,5 +112,14 @@ namespace JellyMusic.Views
         private void ItemSettings_Selected(object sender, RoutedEventArgs e)
         {
         }
+        private void IntroVideo_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            Storyboard sb = FindResource("VideoFade") as Storyboard;
+            sb.Completed += (sndr, args) =>
+            {
+                IntroVideo.Source = null;
+            };
+            sb.Begin();
+        }
     }
 }

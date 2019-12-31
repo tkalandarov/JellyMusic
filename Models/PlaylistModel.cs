@@ -4,12 +4,14 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Windows.Input;
+using JellyMusic.ViewModels;
 
 namespace JellyMusic.Models
 {
     // This attribute make serializer save only [JsonProperty] marked properties
     [JsonObject(MemberSerialization.OptIn)]
-    public class Playlist : BaseNotifyPropertyChanged, IComparable
+    public class Playlist : BaseNotifyPropertyChanged
     {
         #region Fields and Properties
 
@@ -43,20 +45,22 @@ namespace JellyMusic.Models
             else
             {
                 Shuffle();
-                return TrackList;
+                return GetSortedTrackList(SortMethod);
             }
         }
 
         private TrackSortingMethod _sortMethod;
+        [JsonProperty]
         public TrackSortingMethod SortMethod
         {
             get => _sortMethod;
             set
             {
                 SetProperty(ref _sortMethod, value);
-                ChangeSortingMethod(value);
+                OnSortChanged?.Invoke();
             }
         }
+        public event Action OnSortChanged;
 
         #endregion
 
@@ -65,6 +69,8 @@ namespace JellyMusic.Models
         {
             this.Name = Name;
             this.BaseFolderPath = BaseFolderPath;
+
+            _sortMethod = TrackSortingMethod.ByTitle;
 
             TrackList = new BindingList<AudioFile>();
             _shuffledTrackList = new BindingList<AudioFile>();
@@ -80,6 +86,38 @@ namespace JellyMusic.Models
                 LoadTracksFromFolder();
         }
 
+        #region Commands
+
+        private ICommand _sortCommand;
+        public ICommand SortCommand
+        {
+            get
+            {
+                return _sortCommand ??
+                    (_sortCommand = new RelayCommand(action: ChangeSort, canExecute: CanSort));
+            }
+        }
+        private void ChangeSort(object newSort)
+        {
+            SortMethod = (TrackSortingMethod)newSort;
+        }
+        private bool CanSort(object newSort)
+        {
+            bool allSameArtist = !TrackList.Select(item => item.Performer)
+                      .Where(x => !string.IsNullOrEmpty(x))
+                      .Distinct()
+                      .Skip(1)
+                      .Any();
+
+            if (allSameArtist && (TrackSortingMethod)newSort == TrackSortingMethod.ByPerformer) return false;
+
+            if (TrackList.Count > 1 && SortMethod != (TrackSortingMethod)newSort)
+                return true;
+            return false;
+        }
+
+        #endregion
+
         #region Methods
         private void Shuffle()
         {
@@ -87,22 +125,20 @@ namespace JellyMusic.Models
             _shuffledTrackList = new BindingList<AudioFile>(TrackList.OrderBy(item => rnd.Next()).ToList());
         }
 
-        private void ChangeSortingMethod(TrackSortingMethod sortingMethod)
+        private BindingList<AudioFile> GetSortedTrackList(TrackSortingMethod sortingMethod)
         {
             switch (sortingMethod)
             {
                 case TrackSortingMethod.ByTitle:
-                    TrackList = new BindingList<AudioFile>(TrackList.OrderBy(item => item.Title).ToList());
-                    break;
+                    return new BindingList<AudioFile>(TrackList.OrderBy(item => item.Title).ToList());
                 case TrackSortingMethod.ByPerformer:
-                    TrackList = new BindingList<AudioFile>(TrackList.OrderBy(item => item.Performer).ToList());
-                    break;
+                    return new BindingList<AudioFile>(TrackList.OrderBy(item => item.Performer).ToList());
                 case TrackSortingMethod.ByDateAdded:
-                    TrackList = new BindingList<AudioFile>(TrackList.OrderBy(item => item.LastModified).ToList());
-                    break;
+                    return new BindingList<AudioFile>(TrackList.OrderByDescending(item => item.LastModified).ToList());
                 case TrackSortingMethod.ByRating:
-                    TrackList = new BindingList<AudioFile>(TrackList.OrderBy(item => item.Rating).ToList());
-                    break;
+                    return new BindingList<AudioFile>(TrackList.OrderByDescending(item => item.Rating).ToList());
+                default:
+                    return TrackList;
             }
         }
 
@@ -115,13 +151,6 @@ namespace JellyMusic.Models
                     TrackList.Add(tagReader.GetPlaylistTrack());
                 }
             }
-        }
-
-        public int CompareTo(object obj)
-        {
-            Playlist another = obj as Playlist;
-            if (another == null) return -1;
-            return (this.Name.CompareTo(another.Name));
         }
         #endregion
     }

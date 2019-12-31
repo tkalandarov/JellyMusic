@@ -4,14 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:models="clr-namespace:JellyMusic.Models"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="511" d:DesignWidth="1112"
              
              TextElement.Foreground="White"
              TextElement.FontWeight="Regular"
-             TextElement.FontSize="15"
+             TextElement.FontSize="25"
              TextOptions.TextFormattingMode="Ideal" 
              FontFamily="Open Sans">
+    <UserControl.Resources>
+        <system:Boolean x:Key="True">True</system:Boolean>
+        <system:Boolean x:Key="False">False</system:Boolean>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -44,17 +50,47 @@
                 <Rectangle Fill="{StaticResource Panel.Semitransparent}" RadiusX="10" RadiusY="10"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                     <Button x:Name="PlaylistsSort"
+                            ToolTip="Sort by"
                             Style="{StaticResource MaterialDesignToolButton}" 
-                            Height="Auto" Width="50">
+                            Height="Auto" Width="50" Click="PlaylistsSort_Click">
                         <materialDesign:PackIcon Kind="SortVariant" Width="Auto" Height="Auto"/>
                     </Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button x:Name="GoToActive" Click="GoToActive_Click" 
+                            ToolTip="Scroll to active track"
                             Style="{StaticResource MaterialDesignToolButton}" 
                             Height="Auto" Width="50">
                         <materialDesign:PackIcon Kind="MapMarkerCheck" Width="Auto" Height="Auto"/>
                     </Button>
+                </StackPanel>
+            </Grid>
+            <Grid x:Name="SortPanel" Visibility="Collapsed"
+                  Grid.Row="2" 
+                  HorizontalAlignment="Left" VerticalAlignment="Top"
+                  Margin="5" Panel.ZIndex="1">
+                <Rectangle Fill="{StaticResource Panel.Semitransparent}" RadiusX="10" RadiusY="10"/>
+                <StackPanel>
+                    <Button Content="Title" 
+                            Command="{Binding PlaybarVM.ActivePlaylist.SortCommand}"
+                            CommandParameter="{x:Static models:TrackSortingMethod.ByTitle}"
+                            Click="Sort_Click"
+                            Style="{StaticResource MaterialDesignFlatButton}"/>
+                    <Button Content="Artist" 
+                            Command="{Binding PlaybarVM.ActivePlaylist.SortCommand}"
+                            CommandParameter="{x:Static models:TrackSortingMethod.ByPerformer}"
+                            Click="Sort_Click"
+                            Style="{StaticResource MaterialDesignFlatButton}"/>
+                    <Button Content="Date added" 
+                            Command="{Binding PlaybarVM.ActivePlaylist.SortCommand}"
+                            CommandParameter="{x:Static models:TrackSortingMethod.ByDateAdded}"
+                            Click="Sort_Click"
+                            Style="{StaticResource MaterialDesignFlatButton}"/>
+                    <Button Content="Rating" 
+                            Command="{Binding PlaybarVM.ActivePlaylist.SortCommand}"
+                            CommandParameter="{x:Static models:TrackSortingMethod.ByRating}"
+                            Click="Sort_Click"
+                            Style="{StaticResource MaterialDesignFlatButton}"/>
                 </StackPanel>
             </Grid>
             <ListBox x:Name="TracksListBox"
@@ -64,7 +100,7 @@
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid Width="770">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="10*"/>
@@ -87,11 +123,31 @@
                     <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource MaterialDesignListBox}">
                         <Style.Triggers>
                             <Trigger Property="ItemsSource" Value="{x:Null}">
-                                <Setter Property="Template" Value="{StaticResource WaitControlTemplate}"/>
+                                <Setter Property="Template" Value="{StaticResource ControlTemplate.Wait}"/>
+                            </Trigger>
+                            <Trigger Property="HasItems" Value="{StaticResource False}">
+                                <Setter Property="Template" Value="{StaticResource ControlTemplate.NoItems}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
                 </ListBox.Style>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Trigger.Setters>
+                                    <Setter Property="Opacity" Value="1.0" />
+                                    <Setter Property="Background" Value="{StaticResource Panel.Semitransparent}"/>
+                                </Trigger.Setters>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Trigger.Setters>
+                                    <Setter Property="Opacity" Value="0.75" />
+                                </Trigger.Setters>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
         </Grid>
         <StackPanel Orientation="Vertical"
@@ -112,6 +168,19 @@
                                       Orientation="Horizontal"
                                       VerticalAlignment="Bottom"
                                       HorizontalAlignment="Center"/>
+            <StackPanel Orientation="Vertical" 
+                        HorizontalAlignment="Center" 
+                        Margin="10">
+                <TextBlock x:Name="Year" 
+                           Text="{Binding PlaybarVM.ActiveTrack.Year}" 
+                           TextAlignment="Center"/>
+                <TextBlock x:Name="BitRate" 
+                           Text="{Binding PlaybarVM.BitRate}" 
+                           TextAlignment="Center" Margin="5"/>
+                <TextBlock x:Name="FileSize" 
+                           Text="{Binding PlaybarVM.FileSizeInMb}" 
+                           TextAlignment="Center"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>

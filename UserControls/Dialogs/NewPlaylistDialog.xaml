@@ -27,9 +27,10 @@
                    Foreground="{StaticResource Text.Secondary}"
                    HorizontalAlignment="Center" VerticalAlignment="Top"/>
             <TextBox x:Name="NewPlaylistName"
-                             Width="300"
-                             FontSize="25"
-                             TextAlignment="Center"
+                     TextChanged="NewPlaylistName_TextChanged"
+                     Width="300"
+                     FontSize="25"
+                     TextAlignment="Center"
                      Margin="0,0,0,40"/>
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center">
@@ -42,6 +43,7 @@
         </StackPanel>
 
         <Button x:Name="CreateBttn"
+                IsEnabled="False"
                 Content="CREATE"
                 Width="250" Height="80"
                 FontSize="25" Foreground="{StaticResource Text.Main}"

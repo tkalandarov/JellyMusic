@@ -12,21 +12,27 @@ namespace JellyMusic.Models
         public string DefaultPlaylistName
         {
             get => defaultPlaylistName;
-            set => SetProperty(ref defaultPlaylistName, value);
+            set
+            {
+                SetProperty(ref defaultPlaylistName, value);
+                Save();
+            }
         }
 
         private float volume = 1;
         public float Volume
         {
             get => volume;
-            set => SetProperty(ref volume, value);
+            set
+            {
+                SetProperty(ref volume, value);
+                Save();
+            }
         }
 
-        private bool showVolumeSlider = true;
-        public bool ShowVolumeSlider
+        public void Save()
         {
-            get => showVolumeSlider;
-            set => SetProperty(ref showVolumeSlider, value);
+            JsonLite.SerializeToFile(App.SettingsPath, this);
         }
     }
 }

@@ -32,35 +32,88 @@
             <Grid x:Name="PlaylistControlPanel"
                                       Grid.Row="0" Margin="0,5">
                 <Rectangle Fill="{StaticResource Panel.Semitransparent}" RadiusX="10" RadiusY="10"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button x:Name="AddPlaylist" 
-                            Style="{StaticResource MaterialDesignToolButton}" 
-                            Height="Auto" Width="50">
-                        <materialDesign:PackIcon Kind="PlaylistAdd" Width="Auto" Height="Auto"/>
-                    </Button>
-                </StackPanel>
+                <Button x:Name="OpenFolder" 
+                        Click="OpenFolder_Click"
+                        ToolTip="Open playlist directory"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource MaterialDesignToolButton}" 
+                        Height="Auto" Width="50">
+                    <materialDesign:PackIcon Kind="Folder" Width="Auto" Height="Auto"/>
+                </Button>
+                <Button x:Name="AddPlaylist" 
+                        ToolTip="Create a playlist"
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource MaterialDesignToolButton}" 
+                        Height="Auto" Width="50">
+                    <materialDesign:PackIcon Kind="PlaylistAdd" Width="Auto" Height="Auto"/>
+                </Button>
             </Grid>
             <ListBox x:Name="PlaylistsListBox"
                      Grid.Row="1"
+                     SelectionMode="Single"
                      ItemsSource="{Binding PlaylistsVM.PlaylistsCollection, IsAsync=True}"
                      SelectedItem="{Binding PlaybarVM.ActivePlaylist, Mode=TwoWay}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.RowSpan="3" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}" 
+                        <Grid Width="770">
+                            <TextBlock Text="{Binding Name}" 
                                        FontSize="30" TextTrimming="CharacterEllipsis"
                                        HorizontalAlignment="Left"/>
+                            <TextBlock Text="{Binding BaseFolderPath, TargetNullValue=Custom Collection}" 
+                                       Foreground="{StaticResource Text.Secondary}"
+                                       FontSize="15" TextTrimming="CharacterEllipsis"
+                                       HorizontalAlignment="Right"/>
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.Style>
                     <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource MaterialDesignListBox}">
                         <Style.Triggers>
                             <Trigger Property="ItemsSource" Value="{x:Null}">
-                                <Setter Property="Template" Value="{StaticResource WaitControlTemplate}"/>
+                                <Setter Property="Template" Value="{StaticResource ControlTemplate.Wait}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
                 </ListBox.Style>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Trigger.Setters>
+                                    <Setter Property="Opacity" Value="1.0" />
+                                </Trigger.Setters>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Trigger.Setters>
+                                    <Setter Property="Opacity" Value="0.75" />
+                                </Trigger.Setters>
+                            </Trigger>
+                            <EventTrigger RoutedEvent="Mouse.MouseEnter">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0:0:0.2"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="1"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="Mouse.MouseLeave">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0:0:0.2"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0.75"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
         </Grid>
         <Grid x:Name="PlaylistInfoPanel" Grid.Column="1">

@@ -1,5 +1,9 @@
-﻿using System;
+﻿using JellyMusic.Core;
+using JellyMusic.ViewModels;
+
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +15,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace JellyMusic.UserControls
 {
@@ -30,6 +33,15 @@ namespace JellyMusic.UserControls
             NewPlaylistName.Clear();
             TypeToggle.IsChecked = false;
             this.Visibility = Visibility.Collapsed;
+        }
+
+        private void NewPlaylistName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string name = NewPlaylistName.Text;
+            string newPath = Path.Combine(PlaylistsViewModel.PlaylistsDir, name + ".json");
+            bool IsValid = IOService.IsValidFilename(name) && !String.IsNullOrWhiteSpace(name) && !File.Exists(newPath);
+
+            CreateBttn.IsEnabled = IsValid;
         }
     }
 }

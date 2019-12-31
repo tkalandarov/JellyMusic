@@ -19,7 +19,7 @@
     <UserControl.Resources>
         <Converters:TimeSpanToMinAndSecConverter x:Key="ToMinAndSecConverter" />
         <Converters:TimeSpanToSecondsConverter x:Key="ToSecondsConverter" />
-        
+
         <Converters:BoolToPlayPauseToggleConverter x:Key="BoolToPlayPauseConverter"/>
         <Converters:BoolToShuffleToggleConverter x:Key="BoolToShuffleConverter"/>
         <Converters:BoolToLoopToggleConverter x:Key="BoolToLoopConverter"/>
@@ -91,7 +91,7 @@
                     <Slider x:Name="ProgressBar" 
                         IsMoveToPointEnabled="True"
                         Minimum="0" Maximum="{Binding Duration, Converter={StaticResource ToSecondsConverter}, Mode=OneWay}" 
-                        Value="{Binding CurrentProgress , Converter={StaticResource ToSecondsConverter}, Delay=10, TargetNullValue=0}"
+                        Value="{Binding CurrentProgress , Converter={StaticResource ToSecondsConverter}, TargetNullValue=0}"
                         Width="200"
                         Margin="10,0" VerticalAlignment="Center"
                         Thumb.DragStarted="ProgressBar_DragStarted"

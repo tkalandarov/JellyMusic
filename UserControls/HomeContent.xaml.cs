@@ -29,5 +29,18 @@ namespace JellyMusic.UserControls
         {
             TracksListBox.ScrollIntoView(TracksListBox.SelectedItem);
         }
+
+        private void Sort_Click(object sender, RoutedEventArgs e)
+        {
+            SortPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private void PlaylistsSort_Click(object sender, RoutedEventArgs e)
+        {
+            if (SortPanel.IsVisible)
+                SortPanel.Visibility = Visibility.Collapsed;
+            else
+                SortPanel.Visibility = Visibility.Visible;
+        }
     }
 }

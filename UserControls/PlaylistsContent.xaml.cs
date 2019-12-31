@@ -1,4 +1,5 @@
-﻿using JellyMusic.Views;
+﻿using JellyMusic.ViewModels;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,12 @@ namespace JellyMusic.UserControls
         public PlaylistsContent()
         {
             InitializeComponent();
+        }
+
+        private void OpenFolder_Click(object sender, RoutedEventArgs e)
+        {
+            string dir = PlaylistsViewModel.PlaylistsDir;
+            System.Diagnostics.Process.Start(dir);
         }
     }
 }

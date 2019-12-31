@@ -26,7 +26,11 @@ namespace JellyMusic.Core
         public TimeSpan Progress
         {
             get => _mediaReader == null ? TimeSpan.Zero : _mediaReader.CurrentTime;
-            set => _mediaReader.CurrentTime = value;
+            set
+            {
+                if (_mediaReader == null) return;
+                _mediaReader.CurrentTime = value;
+            }
         }
         public TimeSpan Duration => _mediaReader == null ? TimeSpan.Zero : _mediaReader.TotalTime;
         #endregion
@@ -40,18 +44,18 @@ namespace JellyMusic.Core
                                                        Dispatcher.CurrentDispatcher);
             _progressUpdateTimer.Start();
         }
-        public AudioPlayer(string filePath) : this()
+        public AudioPlayer(string filePath, float volume) : this()
         {
-            InitializeOutput(filePath);
+            InitializeOutput(filePath, volume);
         }
         #endregion
 
         #region Methods
-        public void InitializeOutput(string filePath)
+        public void InitializeOutput(string filePath, float volume = 1)
         {
             if (_waveOut == null)
             {
-                _waveOut = new WaveOut();
+                _waveOut = new WaveOut() { Volume = volume };
                 _waveOut.PlaybackStopped += OnPlaybackStopped;
             }
             _mediaReader = new MediaFoundationReader(filePath);

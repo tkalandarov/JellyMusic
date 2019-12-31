@@ -6,16 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-
 using System.Linq;
-using System.Windows.Input;
 
 namespace JellyMusic.ViewModels
 {
     public class PlaylistsViewModel : BaseNotifyPropertyChanged
     {
         #region Fields and Properties
-        public readonly string PlaylistsDir = Directory.GetCurrentDirectory() + @"\DATA\PLAYLISTS\";
+        public readonly static string PlaylistsDir = Directory.GetCurrentDirectory() + @"\DATA\PLAYLISTS\";
 
         private readonly JsonService<Playlist> _serializer;
 
@@ -36,6 +34,9 @@ namespace JellyMusic.ViewModels
                 AllowNew = true,
                 AllowRemove = true
             };
+
+            Directory.CreateDirectory(PlaylistsDir);
+            File.Create(Path.Combine(PlaylistsDir, "RESTART THE APP IN CASE OF CHANGES"));
 
             LoadPlaylists();
             LoadAllTracks();

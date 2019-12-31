@@ -26,6 +26,7 @@ namespace JellyMusic.Core
         public string Performer { get => file.Tag.FirstPerformer; }
         public string Genre { get => file.Tag.FirstGenre; }
         public uint Year { get => file.Tag.Year; }
+        public int BitRate { get => file.Properties.AudioBitrate; }
 
         public TimeSpan TrackLength { get => file.Properties.Duration; }
         public DateTime LastModified { get => File.GetLastWriteTime(FilePath); }

@@ -41,7 +41,25 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="60"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+        <Storyboard x:Key="Startup">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HomeContent">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:3" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="VideoFade">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="IntroVideo">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.985"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource Startup}"/>
+        </EventTrigger>
+    </Window.Triggers>
     <Border BorderBrush="Transparent"
             BorderThickness='1'>
         <Grid>
@@ -54,6 +72,12 @@
                 <RowDefinition Height="5*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            <!-- Intro video -->
+            <MediaElement x:Name="IntroVideo"
+                          Source="Assets/Intro.mov"
+                          IsMuted="True" 
+                          Grid.ColumnSpan="3" Grid.RowSpan="3"
+                          MediaEnded="IntroVideo_MediaEnded" UnloadedBehavior="Stop"/>
             <!-- Background image -->
             <Image Source="{Binding PlaybarVM.ActiveTrack.AlbumPictureSource}"
                    Grid.ColumnSpan="2" Grid.RowSpan="3" 
@@ -133,7 +157,7 @@
             <materialDesign:Transitioner x:Name="ContentTransitioner" SelectedIndex="0"
                                              Grid.Row="1" Grid.Column="1" Margin="10">
                 <uc:HomeContent x:Name="HomeContent"/>
-                
+
                 <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
 
                     <materialDesign:TransitionerSlide.BackwardWipe>

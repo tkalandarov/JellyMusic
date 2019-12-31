@@ -24,13 +24,22 @@
             <SolidColorBrush x:Key="Text.Main" Color="White"/>
             <SolidColorBrush x:Key="Text.Secondary" Color="#FFC2C2C9"/>
 
-            <ControlTemplate x:Key="WaitControlTemplate">
+            <ControlTemplate x:Key="ControlTemplate.Wait">
                 <Grid>
                     <ProgressBar 
                         Style="{StaticResource MaterialDesignCircularProgressBar}"
                         Width="200" Height="200" 
                         IsIndeterminate="True"/>
                     <TextBlock Text="LOADING..."
+                               Foreground="{StaticResource Text.Main}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="20"/>
+                </Grid>
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="ControlTemplate.NoItems">
+                <Grid>
+                    <TextBlock Text="NOTHING HERE..."
                                Foreground="{StaticResource Text.Main}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"
                                FontSize="20"/>
