@@ -40,7 +40,7 @@ namespace JellyMusic
         {
             if (!File.Exists(SettingsPath))
             {
-                Settings = new AppSettings();
+                Settings = new AppSettings() { Volume = 1, IntroEnabled = false };
                 JsonLite.SerializeToFile(SettingsPath, Settings);
             }
             Settings = JsonLite.DeserializeFromFile(SettingsPath, typeof(AppSettings)) as AppSettings;

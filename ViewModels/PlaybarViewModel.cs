@@ -276,7 +276,8 @@ namespace JellyMusic.ViewModels
         }
         private bool canPlayPrevious()
         {
-            return ActiveTrack != null && PlaybackQueue.Contains(ActiveTrack) && !IsFirstTrackPlaying();
+            if (PlaybackQueue == null) return false;
+            else return ActiveTrack != null && PlaybackQueue.Contains(ActiveTrack) && !IsFirstTrackPlaying();
         }
         public ICommand PlayNextCommand
         {
@@ -316,6 +317,12 @@ namespace JellyMusic.ViewModels
                         OnPropertyChanged(nameof(NextTrackTitle));
                         OnPropertyChanged(nameof(PreviousTrackTitle));
                         OnPropertyChanged(nameof(PlaybackQueue));
+                    },
+                    canExecute:
+                    obj =>
+                    {
+                        if (PlaybackQueue == null || PlaybackQueue.Count <= 1) return false;
+                        else return true;
                     }
                     ));
             }
@@ -409,12 +416,12 @@ namespace JellyMusic.ViewModels
 
         public bool IsFirstTrackPlaying()
         {
-            if (!PlaybackQueue.Contains(_activeTrack)) return true;
+            if (PlaybackQueue == null || !PlaybackQueue.Contains(_activeTrack)) return true;
             return PlaybackQueue?.IndexOf(_activeTrack) == 0;
         }
         public bool IsLastTrackPlaying()
         {
-            if (!PlaybackQueue.Contains(_activeTrack)) return true;
+            if (PlaybackQueue == null || !PlaybackQueue.Contains(_activeTrack)) return true;
             return PlaybackQueue?.IndexOf(_activeTrack) == PlaybackQueue.Count - 1;
         }
 

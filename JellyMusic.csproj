@@ -100,11 +100,17 @@
     <Compile Include="UserControls\Dialogs\NewPlaylistDialog.xaml.cs">
       <DependentUpon>NewPlaylistDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\SettingsContent.xaml.cs">
+      <DependentUpon>SettingsContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\HomeContent.xaml.cs">
       <DependentUpon>HomeContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\PlaylistsContent.xaml.cs">
       <DependentUpon>PlaylistsContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\SearchContent.xaml.cs">
+      <DependentUpon>SearchContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PlaybarViewModel.cs" />
@@ -116,11 +122,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\SettingsContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\HomeContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\PlaylistsContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SearchContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -174,9 +188,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\IntroImg.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Intro.mov">

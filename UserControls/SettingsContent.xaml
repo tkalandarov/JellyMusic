@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="JellyMusic.UserControls.SettingsContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:Converters="clr-namespace:JellyMusic.Converters"
+             xmlns:models="clr-namespace:JellyMusic.Models"
+             xmlns:local="clr-namespace:JellyMusic.UserControls"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             d:DesignHeight="511" d:DesignWidth="1112"
+             
+             TextElement.Foreground="White"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="25"
+             TextOptions.TextFormattingMode="Ideal" 
+             FontFamily="Open Sans">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="TitleGrid"
+              Grid.Row="0"
+              HorizontalAlignment="Left" VerticalAlignment="Top">
+            <TextBlock Text="IT'S ALL YOURS"
+                           Foreground="{StaticResource Text.Main}"
+                           FontSize="50"
+                           TextWrapping="Wrap"/>
+        </Grid>
+        <StackPanel Grid.Row="1" Margin="5">
+            <StackPanel Orientation="Horizontal" Margin="0,15">
+                <TextBlock Text="Startup animation"/>
+                <ToggleButton x:Name="IntroToggle" Margin="10,0" Click="IntroToggle_Clcik"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,15">
+                <TextBlock Text="This one does nothing"/>
+                <ToggleButton Margin="10,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,15">
+                <TextBlock Text="And this too"/>
+                <ToggleButton Margin="10,0"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

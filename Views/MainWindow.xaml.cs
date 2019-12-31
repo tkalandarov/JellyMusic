@@ -20,6 +20,14 @@ namespace JellyMusic.Views
         {
             InitializeComponent();
 
+            if (App.Settings.IntroEnabled)
+            {
+                Storyboard sb = FindResource("Startup") as Storyboard;
+                sb.Begin();
+
+                IntroVideo.Source = new Uri("pack://siteoforigin:,,,/Assets/Intro.mov", UriKind.Absolute);
+            }
+
             MainVM = new MainViewModel();
             Playbar.SetViewModel(MainVM.PlaybarVM);
 
@@ -68,9 +76,19 @@ namespace JellyMusic.Views
                 }
 
                 NewPlaylistDialog.CancelBttn_Click(null, null);
-                //MainVM.OnPropertyChanged("PlaylistsCollection");
             };
         }
+
+        private void IntroVideo_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            Storyboard sb = FindResource("VideoFade") as Storyboard;
+            sb.Completed += (sndr, args) =>
+            {
+                IntroVideo.Source = null;
+            };
+            sb.Begin();
+        }
+
 
         private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
         {
@@ -106,20 +124,13 @@ namespace JellyMusic.Views
         {
             ContentTransitioner.SelectedIndex = 1;
         }
-        private void ItemFavorite_Selected(object sender, RoutedEventArgs e)
+        private void ItemSearch_Selected(object sender, RoutedEventArgs e)
         {
+            ContentTransitioner.SelectedIndex = 2;
         }
         private void ItemSettings_Selected(object sender, RoutedEventArgs e)
         {
-        }
-        private void IntroVideo_MediaEnded(object sender, RoutedEventArgs e)
-        {
-            Storyboard sb = FindResource("VideoFade") as Storyboard;
-            sb.Completed += (sndr, args) =>
-            {
-                IntroVideo.Source = null;
-            };
-            sb.Begin();
+            ContentTransitioner.SelectedIndex = 3;
         }
     }
 }

@@ -8,24 +8,24 @@ namespace JellyMusic.Models
     [Serializable]
     public class AppSettings : BaseNotifyPropertyChanged
     {
-        private string defaultPlaylistName = "Default";
-        public string DefaultPlaylistName
+        private float _volume = 1;
+        public float Volume
         {
-            get => defaultPlaylistName;
+            get => _volume;
             set
             {
-                SetProperty(ref defaultPlaylistName, value);
+                SetProperty(ref _volume, value);
                 Save();
             }
         }
 
-        private float volume = 1;
-        public float Volume
+        private bool _introEnabled = true;
+        public bool IntroEnabled
         {
-            get => volume;
+            get => _introEnabled;
             set
             {
-                SetProperty(ref volume, value);
+                SetProperty(ref _introEnabled, value);
                 Save();
             }
         }

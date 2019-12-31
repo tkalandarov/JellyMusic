@@ -55,11 +55,6 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </Window.Resources>
-    <Window.Triggers>
-        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-            <BeginStoryboard Storyboard="{StaticResource Startup}"/>
-        </EventTrigger>
-    </Window.Triggers>
     <Border BorderBrush="Transparent"
             BorderThickness='1'>
         <Grid>
@@ -74,7 +69,6 @@
             </Grid.RowDefinitions>
             <!-- Intro video -->
             <MediaElement x:Name="IntroVideo"
-                          Source="Assets/Intro.mov"
                           IsMuted="True" 
                           Grid.ColumnSpan="3" Grid.RowSpan="3"
                           MediaEnded="IntroVideo_MediaEnded" UnloadedBehavior="Stop"/>
@@ -91,7 +85,7 @@
             <Grid MouseDown="OnDragMoveWindow"
                   Grid.Row="0" Grid.ColumnSpan="2">
                 <Rectangle Fill="{StaticResource Panel.Semitransparent}"/>
-                <TextBlock Text="JellyMusic (Test Mode)"
+                <TextBlock Text="JellyMusic (Pre-release)"
                            HorizontalAlignment="Left" Margin="15,0"
                            VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" 
@@ -138,10 +132,10 @@
                                 <TextBlock Text="PLAYLISTS" VerticalAlignment="Center" Margin="5"/>
                             </StackPanel>
                         </ListViewItem>
-                        <ListViewItem x:Name="ItemFavorite" Height="60" Selected="ItemFavorite_Selected">
+                        <ListViewItem x:Name="ItemSearch" Height="60" Selected="ItemSearch_Selected">
                             <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="HeartMultipleOutline" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="FAVORITES" VerticalAlignment="Center"  Margin="5"/>
+                                <materialDesign:PackIcon Kind="Search" Height="25" Width="25" Margin="10"/>
+                                <TextBlock Text="SEARCH" VerticalAlignment="Center"  Margin="5"/>
                             </StackPanel>
                         </ListViewItem>
                         <ListViewItem x:Name="ItemSettings" Height="60" Selected="ItemSettings_Selected">
@@ -165,8 +159,10 @@
                     </materialDesign:TransitionerSlide.BackwardWipe>
 
                     <uc:PlaylistsContent x:Name="PlaylistContent"/>
-
                 </materialDesign:TransitionerSlide>
+
+                <uc:SearchContent x:Name="SearchContent"/>
+                <uc:SettingsContent x:Name="SettingsContent"/>
             </materialDesign:Transitioner>
             <!-- Media control -->
             <Views:PlaybarView x:Name="Playbar"

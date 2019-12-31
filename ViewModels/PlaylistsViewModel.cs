@@ -20,6 +20,38 @@ namespace JellyMusic.ViewModels
         public BindingList<Playlist> PlaylistsCollection { get; set; }
         public BindingList<AudioFile> AllTracks { get; private set; }
 
+        private string _searchPattern;
+        public string SearchPattern
+        {
+            get => _searchPattern;
+            set
+            {
+                SetProperty(ref _searchPattern, value);
+                OnPropertyChanged(nameof(SearchFilteredTracks));
+            }
+        }
+
+        public BindingList<AudioFile> SearchFilteredTracks
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(SearchPattern) || String.IsNullOrWhiteSpace(SearchPattern)) return null;
+                var result = new BindingList<AudioFile>();
+
+                List<AudioFile> temp = new List<AudioFile>(AllTracks.Where(item =>
+                item.Title != null && item.Title.IndexOf(SearchPattern, StringComparison.CurrentCultureIgnoreCase) != -1 ||
+                item.Album != null && item.Album.IndexOf(SearchPattern, StringComparison.CurrentCultureIgnoreCase) != -1 ||
+                item.Performer != null && item.Performer.IndexOf(SearchPattern, StringComparison.CurrentCultureIgnoreCase) != -1).ToList());
+
+                if (temp.Count == 0)
+                {
+                    temp = null;
+                }
+                else result = new BindingList<AudioFile>(temp);
+                return result;
+            }
+        }
+
         public bool EnableRatingsUpdateRequests { get; set; }
         public event EventHandler<TrackRatingUpdatedEventArgs> RatingsUpdateRequested;
         #endregion
@@ -53,7 +85,7 @@ namespace JellyMusic.ViewModels
 
             if (PlaylistsCollection.Count == 0)
             {
-                AddPlaylist(App.Settings.DefaultPlaylistName, Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
+                AddPlaylist("Default", Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
             }
         }
         private void LoadAllTracks()
