@@ -15,7 +15,7 @@
              TextElement.FontWeight="Regular"
              TextElement.FontSize="15"
              TextOptions.TextFormattingMode="Ideal" 
-             FontFamily="Open Sans">
+             FontFamily="Arial">
     <UserControl.Resources>
         <Converters:TimeSpanToMinAndSecConverter x:Key="ToMinAndSecConverter" />
         <Converters:TimeSpanToSecondsConverter x:Key="ToSecondsConverter" />
@@ -89,6 +89,7 @@
                     <TextBlock Text="{Binding CurrentProgress, Converter={StaticResource ToMinAndSecConverter}, TargetNullValue=N/A}"
                                VerticalAlignment="Center"/>
                     <Slider x:Name="ProgressBar" 
+                            IsEnabled="{Binding IsActiveTrackSelected}"
                         IsMoveToPointEnabled="True"
                         Minimum="0" Maximum="{Binding Duration, Converter={StaticResource ToSecondsConverter}, Mode=OneWay}" 
                         Value="{Binding CurrentProgress , Converter={StaticResource ToSecondsConverter}, TargetNullValue=0}"

@@ -14,7 +14,7 @@
              TextElement.FontWeight="Regular"
              TextElement.FontSize="15"
              TextOptions.TextFormattingMode="Ideal" 
-             FontFamily="Open Sans">
+             FontFamily="Arial">
     <UserControl.Resources>
         <Converters:TimeSpanToHrsAndMinsConverter x:Key="ToHoursAndMinsConverter"/>
     </UserControl.Resources>
@@ -40,6 +40,8 @@
                         Height="Auto" Width="50">
                     <materialDesign:PackIcon Kind="Folder" Width="Auto" Height="Auto"/>
                 </Button>
+                
+                <!-- OnClick behavior is in MainWindow.xaml.cs-->
                 <Button x:Name="AddPlaylist" 
                         ToolTip="Create a playlist"
                         HorizontalAlignment="Right"
@@ -53,7 +55,8 @@
                      SelectionMode="Single"
                      ItemsSource="{Binding PlaylistsVM.PlaylistsCollection, IsAsync=True}"
                      SelectedItem="{Binding PlaybarVM.ActivePlaylist, Mode=TwoWay}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.RowSpan="3" >
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" Grid.RowSpan="3"
+                     ScrollViewer.CanContentScroll="{Binding _CanContentScroll}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Width="770">
@@ -72,6 +75,9 @@
                         <Style.Triggers>
                             <Trigger Property="ItemsSource" Value="{x:Null}">
                                 <Setter Property="Template" Value="{StaticResource ControlTemplate.Wait}"/>
+                            </Trigger>
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter Property="Template" Value="{StaticResource ControlTemplate.NoItems}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -132,7 +138,7 @@
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"
                                     Margin="10">
-                <TextBlock Text="{Binding StringFormat={}{0} Tracks, Path=PlaybarVM.ActivePlaylist.TrackList.Count}"
+                <TextBlock Text="{Binding StringFormat={}{0} Tracks, Path=PlaybarVM.TrackCount}"
                                        FontSize="50"></TextBlock>
                 <TextBlock Text="{Binding PlaybarVM.ActivePlaylist.TotalDuration, Converter={StaticResource ToHoursAndMinsConverter}}"
                                        FontSize="20" TextAlignment="Right"></TextBlock>

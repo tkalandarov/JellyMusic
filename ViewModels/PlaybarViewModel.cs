@@ -1,17 +1,15 @@
 ﻿using JellyMusic.Core;
-using JellyMusic.EventArguments;
 using JellyMusic.Models;
 
 using NAudio.Wave;
-using Newtonsoft.Json;
 
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace JellyMusic.ViewModels
 {
@@ -41,6 +39,7 @@ namespace JellyMusic.ViewModels
                 OnPlaylistChanged.Invoke();
             }
         }
+        public int? TrackCount => ActivePlaylist?.TrackList?.Count;
         public ImageSource ActivePlaylistPicture
         {
             get
@@ -68,6 +67,16 @@ namespace JellyMusic.ViewModels
                 if (!File.Exists(value.FilePath))
                 {
                     OnTrackNotFound.Invoke(value.FilePath);
+                    AudioPlayer.Pause();
+                    MessageBox.Show($"Operation unsuccessful.\n\nTrack not found", "An Error Occurred", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    _activeTrack = value;
+                    if (PlayNextCommand.CanExecute(null)) PlayNextCommand.Execute(null);
+
+                    ActivePlaylist.TrackList.Remove(value);
+                    OnPropertyChanged(nameof(PlaybackQueue));
+                    OnPropertyChanged(nameof(TrackCount));
+                    return;
                 }
 
                 CurrentProgress = TimeSpan.Zero;
@@ -75,6 +84,8 @@ namespace JellyMusic.ViewModels
                 OnTrackChanged.Invoke();
             }
         }
+        public bool IsActiveTrackSelected => ActiveTrack != null;
+        public string ActiveTrackTitle => ActiveTrack?.Title;
         public ImageSource ActiveTrackPicture
         {
             get
@@ -176,7 +187,7 @@ namespace JellyMusic.ViewModels
 
             OnTrackChanged += () =>
             {
-                AudioPlayer.ChangeTrack(ActiveTrack.FilePath, IsPlaying);
+                AudioPlayer.ChangeTrack(ActiveTrack.FilePath, CurrentVolume ,IsPlaying);
 
                 UpdateActiveTrackView();
             };
@@ -197,11 +208,15 @@ namespace JellyMusic.ViewModels
 
                 OnPropertyChanged(nameof(NextTrackTitle));
                 OnPropertyChanged(nameof(PreviousTrackTitle));
+
+                OnPropertyChanged(nameof(TrackCount));
             };
 
-            DispatcherTimer dispatcherTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(.1) };
+            // Would be used for debugging
+
+            /*DispatcherTimer dispatcherTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(.1) };
             dispatcherTimer.Tick += DebugOutput;
-            dispatcherTimer.Start();
+            dispatcherTimer.Start();*/
         }
 
         #endregion
@@ -316,7 +331,7 @@ namespace JellyMusic.ViewModels
                         OnPropertyChanged(nameof(IsShuffled));
                         OnPropertyChanged(nameof(NextTrackTitle));
                         OnPropertyChanged(nameof(PreviousTrackTitle));
-                        OnPropertyChanged(nameof(PlaybackQueue));
+                        //OnPropertyChanged(nameof(PlaybackQueue)); uncomment if you want to show shuffled queue
                     },
                     canExecute:
                     obj =>
@@ -444,7 +459,8 @@ namespace JellyMusic.ViewModels
             OnPropertyChanged(nameof(PreviousTrackTitle));
             OnPropertyChanged(nameof(BitRate));
             OnPropertyChanged(nameof(FileSizeInMb));
-
+            OnPropertyChanged(nameof(IsActiveTrackSelected));
+            OnPropertyChanged(nameof(ActiveTrackTitle));
         }
         #endregion
     }

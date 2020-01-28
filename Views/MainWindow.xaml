@@ -7,6 +7,8 @@
         xmlns:ViewModels="clr-namespace:JellyMusic.ViewModels"
         xmlns:Views="clr-namespace:JellyMusic.Views"
         xmlns:uc="clr-namespace:JellyMusic.UserControls"
+        
+        xmlns:main="clr-namespace:JellyMusic"
         mc:Ignorable="d"
                      
         d:DataContext="{d:DesignInstance ViewModels:MainViewModel}"
@@ -14,12 +16,13 @@
         Title="JellyMusic" 
         Height="700" Width="1200"
         ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen"
         
         TextElement.Foreground="White"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="15"
         TextOptions.TextFormattingMode="Ideal" 
-        FontFamily="Open Sans"
+        FontFamily="Arial"
         Background="{StaticResource Background.Gradient.Main}">
     <WindowChrome.WindowChrome>
         <WindowChrome 
@@ -69,7 +72,6 @@
             </Grid.RowDefinitions>
             <!-- Intro video -->
             <MediaElement x:Name="IntroVideo"
-                          IsMuted="True" 
                           Grid.ColumnSpan="3" Grid.RowSpan="3"
                           MediaEnded="IntroVideo_MediaEnded" UnloadedBehavior="Stop"/>
             <!-- Background image -->
@@ -120,10 +122,10 @@
                     <Image Height="80" VerticalAlignment="Bottom"/>
                     <ListView x:Name="ListViewMenu" 
                                           ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListViewItem x:Name="ItemHome" Height="60" Selected="ItemHome_Selected">
+                        <ListViewItem x:Name="ItemHome" Height="60" Selected="ItemTracks_Selected">
                             <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="HomeOutline" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="YOUR ZONE" VerticalAlignment="Center" Margin="5"/>
+                                <materialDesign:PackIcon Kind="Music" Height="25" Width="25" Margin="10"/>
+                                <TextBlock Text="TRACKS" VerticalAlignment="Center" Margin="5"/>
                             </StackPanel>
                         </ListViewItem>
                         <ListViewItem x:Name="ItemPlaylists" Height="60" Selected="ItemPlaylists_Selected">
@@ -168,6 +170,11 @@
             <Views:PlaybarView x:Name="Playbar"
                   Grid.Row="2" Grid.ColumnSpan="2"/>
             <uc:NewPlaylistDialog x:Name="NewPlaylistDialog"
+                                  Visibility="Collapsed"
+                                  Width="600" Height="360" 
+                                  Grid.ColumnSpan="3" Grid.RowSpan="2"
+                                  materialDesign:ShadowAssist.ShadowDepth="Depth4"/>
+            <uc:RestartAppDialog x:Name="RestartDialog"
                                   Visibility="Collapsed"
                                   Width="600" Height="360" 
                                   Grid.ColumnSpan="3" Grid.RowSpan="2"

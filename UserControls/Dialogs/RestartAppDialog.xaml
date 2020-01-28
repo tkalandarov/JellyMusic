@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="JellyMusic.UserControls.RestartAppDialog"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="600"
+             
+             TextElement.Foreground="White"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="15"
+             TextOptions.TextFormattingMode="Ideal" 
+             FontFamily="Open Sans">
+
+    <Grid>
+        <Rectangle Fill="{StaticResource Panel.NonTransparent}" Opacity=".8" 
+                   RadiusX="20" RadiusY="20"/>
+        <StackPanel>
+            <TextBlock Foreground="{StaticResource Text.Main}" 
+                   FontSize="35"
+                   Margin="0,25,0,75"
+                   Text="WARNING!"
+                   HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <TextBlock Text="App restart is required for new settings to apply"
+                       FontSize="30" 
+                       TextWrapping="Wrap" TextAlignment="Center"
+                       Foreground="{StaticResource Text.Secondary}"
+                       HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <Button x:Name="RestartBttn"
+                Content="RESTART NOW"
+                Width="250" Height="80"
+                FontSize="25" Foreground="{StaticResource Text.Main}"
+                Style="{DynamicResource MaterialDesignFlatButton}" 
+                HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                Margin="20"
+                    Click="RestartBttn_Click"/>
+            <TextBlock Text="or"
+                       VerticalAlignment="Center"
+                       FontSize="30" 
+                       Foreground="{StaticResource Text.Secondary}"/>
+            <Button x:Name="CancelBttin"
+                Content="RESTART LATER"
+                Width="250" Height="80"
+                FontSize="25" Foreground="{StaticResource Text.Main}"
+                Style="{DynamicResource MaterialDesignFlatButton}" 
+                HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Margin="20" Click="CancelBttin_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

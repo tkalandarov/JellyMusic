@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:models="clr-namespace:JellyMusic.Models"
+             xmlns:custom="clr-namespace:JellyMusic.CustomControls"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="511" d:DesignWidth="1112"
@@ -13,7 +14,7 @@
              TextElement.FontWeight="Regular"
              TextElement.FontSize="25"
              TextOptions.TextFormattingMode="Ideal" 
-             FontFamily="Open Sans">
+             FontFamily="Arial">
     <UserControl.Resources>
         <system:Boolean x:Key="True">True</system:Boolean>
         <system:Boolean x:Key="False">False</system:Boolean>
@@ -37,7 +38,7 @@
                        FontSize="25"
                        Foreground="{StaticResource Text.Main}"/>
                 <Viewbox MaxHeight="100">
-                    <TextBlock Text="{Binding PlaybarVM.ActiveTrack.Title}"
+                    <TextBlock Text="{Binding PlaybarVM.ActiveTrackTitle, TargetNullValue=Nothing...}"
                            Foreground="{StaticResource Text.Main}"
                            FontSize="50"
                            TextWrapping="Wrap"/>
@@ -97,10 +98,13 @@
                      Grid.Row="2"
                      ItemsSource="{Binding PlaybarVM.PlaybackQueue, IsAsync=True}"
                      SelectedItem="{Binding PlaybarVM.ActiveTrack, Mode=TwoWay}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     VirtualizingPanel.IsVirtualizing="true" 
+                     VirtualizingStackPanel.VirtualizationMode="Recycling"
+                     ScrollViewer.CanContentScroll="{Binding _CanContentScroll}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid Width="770">
+                        <Grid Width="770" Height="50">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="10*"/>
@@ -109,12 +113,13 @@
                                     BorderBrush="Gray"
                                     HorizontalAlignment="Left" BorderThickness="1" CornerRadius="10" Width="60">
                                 <Border.Background>
-                                    <ImageBrush ImageSource="{Binding AlbumPictureSource, IsAsync=True}"/>
+                                    <ImageBrush ImageSource="{Binding AlbumPictureSource, IsAsync=True}" 
+                                                Stretch="UniformToFill"/>
                                 </Border.Background>
                             </Border>
-                            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,5" Grid.ColumnSpan="2">
+                            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,5">
                                 <TextBlock Text="{Binding Title}" FontSize="20" TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Text="{Binding Performer}" FontSize="20" Foreground="{StaticResource Text.Secondary}" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{Binding Performer}" FontSize="15" Foreground="{StaticResource Text.Secondary}" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Grid>
                     </DataTemplate>
@@ -125,7 +130,7 @@
                             <Trigger Property="ItemsSource" Value="{x:Null}">
                                 <Setter Property="Template" Value="{StaticResource ControlTemplate.Wait}"/>
                             </Trigger>
-                            <Trigger Property="HasItems" Value="{StaticResource False}">
+                            <Trigger Property="HasItems" Value="False">
                                 <Setter Property="Template" Value="{StaticResource ControlTemplate.NoItems}"/>
                             </Trigger>
                         </Style.Triggers>
@@ -164,7 +169,8 @@
                 </Border.Background>
             </Border>
             <materialDesign:RatingBar x:Name="RatingBar"
-                                      Value="{Binding PlaybarVM.ActiveTrack.Rating, TargetNullValue=0, Mode=TwoWay}" 
+                                      Value="{Binding PlaybarVM.ActiveTrack.Rating, TargetNullValue=0, Mode=TwoWay}"
+                                      IsEnabled="{Binding PlaybarVM.IsActiveTrackSelected}"
                                       Orientation="Horizontal"
                                       VerticalAlignment="Bottom"
                                       HorizontalAlignment="Center"/>

@@ -6,6 +6,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using System.Windows.Input;
 using JellyMusic.ViewModels;
+using System.Collections.Generic;
 
 namespace JellyMusic.Models
 {
@@ -32,7 +33,17 @@ namespace JellyMusic.Models
 
         [JsonProperty]
         public string BaseFolderPath { get; }
+
         [JsonProperty]
+        private BindingList<AudioFile> TracksToSerialize
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(BaseFolderPath)) return TrackList;
+                else return null;
+            }
+        }
+
         public BindingList<AudioFile> TrackList { get; private set; }
         private BindingList<AudioFile> _shuffledTrackList;
 
@@ -75,10 +86,17 @@ namespace JellyMusic.Models
             TrackList = new BindingList<AudioFile>();
             _shuffledTrackList = new BindingList<AudioFile>();
 
+            TrackList.ListChanged += (object sender, ListChangedEventArgs e)=>
+            {
+                OnPropertyChanged(nameof(TotalDuration));
+            };
+
             if (TracksToAdd != null)
             {
                 foreach (var track in TracksToAdd)
+                {
                     TrackList.Add(track);
+                }
             }
 
 

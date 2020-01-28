@@ -70,12 +70,12 @@ namespace JellyMusic.Core
             }
         }
 
-        public void ChangeTrack(string filePath, bool IsPlaying)
+        public void ChangeTrack(string filePath, float volume ,bool isPlaying)
         {
             Dispose();
-            InitializeOutput(filePath);
+            InitializeOutput(filePath, volume);
 
-            if (IsPlaying)
+            if (isPlaying)
                 Play();
         }
 

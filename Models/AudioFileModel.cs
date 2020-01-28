@@ -22,7 +22,8 @@ namespace JellyMusic.Models
             set
             {
                 SetProperty(ref _filePath, value);
-                OnFilePathChanged();
+                if (File.Exists(value))
+                    OnFilePathChanged();
             }
         }
 

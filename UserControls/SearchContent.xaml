@@ -15,7 +15,7 @@
              TextElement.FontWeight="Regular"
              TextElement.FontSize="15"
              TextOptions.TextFormattingMode="Ideal" 
-             FontFamily="Open Sans">
+             FontFamily="Arial">
     <UserControl.Resources>
         <system:Boolean x:Key="True">True</system:Boolean>
         <system:Boolean x:Key="False">False</system:Boolean>
@@ -51,10 +51,11 @@
                      Grid.Row="2"
                      ItemsSource="{Binding PlaylistsVM.SearchFilteredTracks, IsAsync=True}"
                      SelectedItem="{Binding PlaybarVM.ActiveTrack, Mode=TwoWay}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.CanContentScroll="{Binding _CanContentScroll}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Width="770">
+                    <Grid Width="1070">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="10*"/>
@@ -66,9 +67,12 @@
                                 <ImageBrush ImageSource="{Binding AlbumPictureSource, IsAsync=True}"/>
                             </Border.Background>
                         </Border>
-                        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,5" Grid.ColumnSpan="2">
+                        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,5">
                             <TextBlock Text="{Binding Title}" FontSize="20" TextTrimming="CharacterEllipsis"/>
-                            <TextBlock Text="{Binding Performer}" FontSize="20" Foreground="{StaticResource Text.Secondary}" TextTrimming="CharacterEllipsis"/>
+                            <DockPanel HorizontalAlignment="Stretch">
+                                <TextBlock Text="{Binding Performer}" FontSize="15" Foreground="{StaticResource Text.Secondary}" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left"/>
+                                <TextBlock Text="{Binding Album}" FontSize="15" Foreground="{StaticResource Text.Secondary}" TextTrimming="CharacterEllipsis" HorizontalAlignment="Right"/>
+                            </DockPanel>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

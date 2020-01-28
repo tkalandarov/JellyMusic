@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace JellyMusic.Core
@@ -25,7 +26,6 @@ namespace JellyMusic.Core
         public static void CacheSingle(AudioFile track)
         {
             Directory.CreateDirectory(cachePath); // does nothing if folder already exists
-
             using (TagReader reader = new TagReader(track.FilePath))
             {
                 string picPath = Path.Combine(cachePath, track.Id + ".png");

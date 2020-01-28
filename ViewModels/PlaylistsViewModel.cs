@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace JellyMusic.ViewModels
 {
@@ -80,7 +81,22 @@ namespace JellyMusic.ViewModels
         {
             foreach (string elem in IOService.GetFilesByExtensions(PlaylistsDir, SearchOption.TopDirectoryOnly, ".json"))
             {
-                PlaylistsCollection.Add(_serializer.DeserializeFromFile(elem));
+                Playlist deserialzedPlaylist = _serializer.DeserializeFromFile(elem);
+
+                List<AudioFile> NonExistingTracks = new List<AudioFile>();
+                foreach (var track in deserialzedPlaylist.TrackList)
+                {
+                    if (!File.Exists(track.FilePath))
+                    {
+                        NonExistingTracks.Add(track);
+                    }
+                }
+                foreach (var track in NonExistingTracks)
+                {
+                    deserialzedPlaylist.TrackList.Remove(track);
+                }
+
+                PlaylistsCollection.Add(deserialzedPlaylist);
             }
 
             if (PlaylistsCollection.Count == 0)
@@ -96,20 +112,28 @@ namespace JellyMusic.ViewModels
             {
                 for (int i = 0; i < playlist.TrackList.Count; i++)
                 {
-                    // If AllTracks already has this track in another playlist
-                    if (AllTracks.Any(x => x.FilePath == playlist.TrackList[i].FilePath))
+                    if (File.Exists(playlist.TrackList[i].FilePath))
                     {
-                        // Assign this track
-                        playlist.TrackList[i] = AllTracks.Single(x => x.FilePath == playlist.TrackList[i].FilePath);
-                    }
-                    else
-                    {
-                        // Add track to AllTracks
-                        AllTracks.Add(playlist.TrackList[i]);
-                        playlist.TrackList[i].OnRatingChanged += OnTrackRatingChanged;
+                        // If AllTracks already has this track in another playlist
+                        if (AllTracks.Any(x => x.FilePath == playlist.TrackList[i].FilePath))
+                        {
+                            // Assign this track
+                            playlist.TrackList[i] = AllTracks.Single(x => x.FilePath == playlist.TrackList[i].FilePath);
+                        }
+                        else
+                        {
+                            // Add track to AllTracks
+                            AllTracks.Add(playlist.TrackList[i]);
+                            playlist.TrackList[i].OnRatingChanged += OnTrackRatingChanged;
+                        }
                     }
                 }
             }
+
+            AllTracks.ListChanged += (object sender, ListChangedEventArgs e) =>
+            {
+                  OnPropertyChanged(nameof(SearchFilteredTracks));
+            };
         }
         private void PerformCaching()
         {

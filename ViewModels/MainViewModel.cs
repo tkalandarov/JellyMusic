@@ -17,8 +17,9 @@ namespace JellyMusic.ViewModels
         public PlaybarViewModel PlaybarVM { get; private set; }
 
         private string _ratingsPath = Directory.GetCurrentDirectory() + @"\DATA\Ratings.json";
-
         public Dictionary<string, byte> TracksRatings;  //Contains TrackId-Rating pair
+
+        public bool _CanContentScroll => App.Settings.Virtualization;
         #endregion
 
         public MainViewModel()
@@ -39,7 +40,8 @@ namespace JellyMusic.ViewModels
 
             PlaybarVM.OnTrackNotFound += (string path) =>
             {
-                PlaylistsVM.AllTracks.Remove(PlaylistsVM.AllTracks.Single(x => x.FilePath == path));
+                if (PlaylistsVM.AllTracks.Any(x => x.FilePath == path))
+                    PlaylistsVM.AllTracks.Remove(PlaylistsVM.AllTracks.Single(x => x.FilePath == path));
             };
         }
 

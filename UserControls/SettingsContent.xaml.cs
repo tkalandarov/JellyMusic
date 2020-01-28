@@ -20,16 +20,46 @@ namespace JellyMusic.UserControls
     /// </summary>
     public partial class SettingsContent : UserControl
     {
+        public event Action AppRestartRequired;
         public SettingsContent()
         {
             InitializeComponent();
 
+            AssignSettingsValues();
+        }
+
+        private void AssignSettingsValues()
+        {
             IntroToggle.IsChecked = App.Settings.IntroEnabled;
+            IntroSoundToggle.IsChecked = App.Settings.IntroMuted;
+            VirtualizationToggle.IsChecked = App.Settings.Virtualization;
         }
 
         private void IntroToggle_Clcik(object sender, RoutedEventArgs e)
         {
             App.Settings.IntroEnabled = IntroToggle.IsChecked.HasValue && IntroToggle.IsChecked.Value;
+        }
+
+        private void IntroMutedToggle_Click(object sender, RoutedEventArgs e)
+        {
+            App.Settings.IntroMuted = IntroSoundToggle.IsChecked.HasValue && IntroSoundToggle.IsChecked.Value;
+        }
+
+        private void VirtualizationToggle_Click(object sender, RoutedEventArgs e)
+        {
+            App.Settings.Virtualization = VirtualizationToggle.IsChecked.HasValue && VirtualizationToggle.IsChecked.Value;
+            AppRestartRequired.Invoke();
+        }
+
+        private void ResetDefaultsButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool oldVirtValue = App.Settings.Virtualization;
+
+            App.CreateDedaultAppSettings();
+            AssignSettingsValues();
+
+            if (App.Settings.Virtualization != oldVirtValue)
+                AppRestartRequired.Invoke();
         }
     }
 }

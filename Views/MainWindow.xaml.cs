@@ -4,11 +4,8 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using JellyMusic.Core;
-using JellyMusic.Models;
-using JellyMusic.ViewModels;
 
-using MaterialDesignThemes.Wpf;
+using JellyMusic.ViewModels;
 
 namespace JellyMusic.Views
 {
@@ -20,12 +17,16 @@ namespace JellyMusic.Views
         {
             InitializeComponent();
 
+            // Play startup animation if enabled
             if (App.Settings.IntroEnabled)
             {
                 Storyboard sb = FindResource("Startup") as Storyboard;
                 sb.Begin();
 
-                IntroVideo.Source = new Uri("pack://siteoforigin:,,,/Assets/Intro.mov", UriKind.Absolute);
+                if (App.Settings.IntroMuted)
+                    IntroVideo.Source = new Uri("pack://siteoforigin:,,,/Assets/Intro.mov", UriKind.Absolute);
+                else
+                    IntroVideo.Source = new Uri("pack://siteoforigin:,,,/Assets/IntroSound.mov", UriKind.Absolute);
             }
 
             MainVM = new MainViewModel();
@@ -77,6 +78,12 @@ namespace JellyMusic.Views
 
                 NewPlaylistDialog.CancelBttn_Click(null, null);
             };
+
+            SettingsContent.AppRestartRequired += () =>
+            {
+                RestartDialog.Visibility = Visibility.Visible;
+            };
+
         }
 
         private void IntroVideo_MediaEnded(object sender, RoutedEventArgs e)
@@ -116,7 +123,7 @@ namespace JellyMusic.Views
             sb.Begin();
         }
 
-        private void ItemHome_Selected(object sender, RoutedEventArgs e)
+        private void ItemTracks_Selected(object sender, RoutedEventArgs e)
         {
             ContentTransitioner.SelectedIndex = 0;
         }
