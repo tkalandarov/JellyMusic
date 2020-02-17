@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using System.Windows.Input;
 using JellyMusic.ViewModels;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using JellyMusic.UserControls;
 
 namespace JellyMusic.Models
 {
@@ -86,9 +88,10 @@ namespace JellyMusic.Models
             TrackList = new BindingList<AudioFile>();
             _shuffledTrackList = new BindingList<AudioFile>();
 
-            TrackList.ListChanged += (object sender, ListChangedEventArgs e)=>
+            TrackList.ListChanged += (object sender, ListChangedEventArgs e) =>
             {
                 OnPropertyChanged(nameof(TotalDuration));
+                OnPropertyChanged(nameof(TrackList));
             };
 
             if (TracksToAdd != null)
@@ -153,13 +156,12 @@ namespace JellyMusic.Models
                     return new BindingList<AudioFile>(TrackList.OrderBy(item => item.Performer).ToList());
                 case TrackSortingMethod.ByDateAdded:
                     return new BindingList<AudioFile>(TrackList.OrderByDescending(item => item.LastModified).ToList());
-                case TrackSortingMethod.ByRating:
-                    return new BindingList<AudioFile>(TrackList.OrderByDescending(item => item.Rating).ToList());
+                /*case TrackSortingMethod.ByRating:
+                    return new BindingList<AudioFile>(TrackList.OrderByDescending(item => item.Rating).ToList());*/
                 default:
                     return TrackList;
             }
         }
-
         public void LoadTracksFromFolder()
         {
             foreach (var path in IOService.GetFilesByExtensions(BaseFolderPath, SearchOption.AllDirectories, ".mp3"))
@@ -170,6 +172,7 @@ namespace JellyMusic.Models
                 }
             }
         }
+
         #endregion
     }
 }

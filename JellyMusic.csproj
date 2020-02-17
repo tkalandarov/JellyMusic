@@ -98,8 +98,6 @@
     <Compile Include="Core\Storage\SerializingService.cs" />
     <Compile Include="Core\Storage\IOService.cs" />
     <Compile Include="Core\MVVM\RelayCommand.cs" />
-    <Compile Include="CustomControls\WheelSpeedScrollViewer.cs" />
-    <Compile Include="EventArguments\TrackRatingUpdatedEventArgs.cs" />
     <Compile Include="Models\AppSettings.cs" />
     <Compile Include="UserControls\Dialogs\NewPlaylistDialog.xaml.cs">
       <DependentUpon>NewPlaylistDialog.xaml</DependentUpon>
@@ -205,6 +203,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\IntroSound.mov">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\music_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <SplashScreen Include="Assets\SplashScreen.png">

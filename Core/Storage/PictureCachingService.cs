@@ -3,53 +3,45 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace JellyMusic.Core
 {
-    public class PictureCachingService
+    public static class PictureCachingService
     {
         private readonly static string cachePath = Directory.GetCurrentDirectory() + @"\DATA\CACHE\";
-        private const int picWidth = 75;
-        private const int picHeight = 75;
+        private const int picWidth = 50;
+        private const int picHeight = 50;
 
-        public readonly BindingList<AudioFile> Tracks;
-
-        public PictureCachingService(BindingList<AudioFile> Tracks)
+        static PictureCachingService()
         {
             Directory.CreateDirectory(cachePath); // does nothing if folder already exists
-
-            this.Tracks = Tracks;
         }
 
-        public static void CacheSingle(AudioFile track)
+        public static async Task<BitmapImage> GetProcessedFileAsync(AudioFile track)
         {
             Directory.CreateDirectory(cachePath); // does nothing if folder already exists
+
+            string picPath = Path.Combine(cachePath, track.Id + ".png");
+            if (File.Exists(picPath))
+                return new BitmapImage(new Uri(picPath));
+
             using (TagReader reader = new TagReader(track.FilePath))
             {
-                string picPath = Path.Combine(cachePath, track.Id + ".png");
-
-                // If there is picture cached, set it
+                // If there is no picture cached, cache it
                 if (!File.Exists(picPath))
                 {
                     // save picture to storage
                     if (reader.HasAlbumCover)
-                        CacheImage(picPath, reader.GetAlbumCoverBitmap(picWidth, picHeight));
+                    {
+                        await Task.Run(() => CacheImage(picPath, reader.GetAlbumCoverBitmap(picWidth, picHeight)));
+                        return new BitmapImage(new Uri(picPath));
+                    }
                 }
-
-                // read picture data from storage
-                if (reader.HasAlbumCover)
-                    track.AlbumPictureSource = new BitmapImage(new Uri(picPath));
-            }
-        }
-
-        public void CacheAndAssign()
-        {
-            foreach (var track in Tracks)
-            {
-                if (track.AlbumPictureSource != null) continue;
-                CacheSingle(track);
+                return null;
             }
         }
 

@@ -83,7 +83,6 @@ namespace JellyMusic.Core
                 Genre = Genre,
                 Year = Year,
 
-                Lyrics = Lyrics,
                 TrackLength = TrackLength,
 
                 Album = Album,
@@ -95,11 +94,21 @@ namespace JellyMusic.Core
         // Generate a unique identification string
         public string GenerateId()
         {
-            string sourceString = Album + Performer + Year;
+            string titlePattern = "";
+            string albumPattern = "";
+            string performerPattern = "";
+
+            if (!String.IsNullOrEmpty(Title))
+                titlePattern = Title.Length > 5 ? Title.Substring(0, 4) : Title;
+            if (!String.IsNullOrEmpty(Album))
+                albumPattern = Album.Length > 5 ? Album.Substring(0, 4) : Album;
+            if (!String.IsNullOrEmpty(Performer))
+                performerPattern = Performer.Length > 5 ? Performer.Substring(0, 4) : Performer;
+
+            string sourceString = titlePattern + albumPattern + performerPattern + Year;
 
             // only space, capital A-Z, lowercase a-z, and digits 0-9 are allowed in the string
-            string result = Regex.Replace(sourceString, "[^A-Za-z0-9 ]", "");
-            if (result.Length > 12) result.Substring(0, 12);
+            string result = Regex.Replace(sourceString, "[^A-Za-z0-9А-Яа-я ]", "");
             return result.Replace(" ", "");
         }
 

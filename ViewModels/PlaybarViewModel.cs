@@ -4,12 +4,15 @@ using JellyMusic.Models;
 using NAudio.Wave;
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace JellyMusic.ViewModels
 {
@@ -56,6 +59,7 @@ namespace JellyMusic.ViewModels
         }
 
         public BindingList<AudioFile> PlaybackQueue => ActivePlaylist?.GetPlaybackQueue(IsShuffled);
+        public bool IsQueueBeingLoaded { get; private set; }
 
         public AudioFile ActiveTrack
         {
@@ -124,6 +128,33 @@ namespace JellyMusic.ViewModels
             }
         }
 
+        public byte ActiveTrackRating
+        {
+            get
+            {
+                if (ActiveTrack == null)
+                    return 0;
+
+                if (TracksRatings.ContainsKey(ActiveTrack.Id))
+                    return TracksRatings[ActiveTrack.Id];
+                else
+                    return 0;
+            }
+            set
+            {
+                if (TracksRatings.ContainsKey(ActiveTrack.Id))
+                {
+                    TracksRatings[ActiveTrack.Id] = value;
+                }
+                else
+                {
+                    TracksRatings.Add(ActiveTrack.Id, value);
+                }
+                JsonLite.SerializeToFile(_ratingsPath, TracksRatings);
+                OnPropertyChanged(nameof(ActiveTrackRating));
+            }
+        }
+
         public TimeSpan CurrentProgress
         {
             get => _currentProgress;
@@ -167,6 +198,9 @@ namespace JellyMusic.ViewModels
 
         public string NextTrackTitle => GetNextTrack()?.Title;
         public string PreviousTrackTitle => GetPreviousTrack()?.Title;
+
+        private readonly string _ratingsPath = Directory.GetCurrentDirectory() + @"\DATA\Ratings.json";
+        private static Dictionary<string, byte> TracksRatings;  //Contains TrackId-Rating pairs
         #endregion
 
         #region Events
@@ -184,20 +218,23 @@ namespace JellyMusic.ViewModels
             _syncPlayer = true;
 
             InitializeAudioPlayer();
+            InitializeTracksRatings();
 
             OnTrackChanged += () =>
             {
-                AudioPlayer.ChangeTrack(ActiveTrack.FilePath, CurrentVolume ,IsPlaying);
+                AudioPlayer.ChangeTrack(ActiveTrack.FilePath, CurrentVolume, IsPlaying);
 
                 UpdateActiveTrackView();
             };
-            OnPlaylistChanged += () =>
+            OnPlaylistChanged += async () =>
             {
                 if (ActivePlaylist == null) return;
 
+                await InitializeTracksPictures();
                 ActivePlaylist.OnSortChanged += () =>
                 {
-                    OnPropertyChanged(nameof(PlaybackQueue));
+                    if (!IsShuffled)
+                        OnPropertyChanged(nameof(PlaybackQueue));
                     OnPropertyChanged(nameof(NextTrackTitle));
                     OnPropertyChanged(nameof(PreviousTrackTitle));
                 };
@@ -213,17 +250,16 @@ namespace JellyMusic.ViewModels
             };
 
             // Would be used for debugging
-
-            /*DispatcherTimer dispatcherTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(.1) };
+            DispatcherTimer dispatcherTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(.1) };
             dispatcherTimer.Tick += DebugOutput;
-            dispatcherTimer.Start();*/
+            //dispatcherTimer.Start();
         }
 
         #endregion
 
         private void DebugOutput(object sender, EventArgs e)
         {
-            // Console.WriteLine(ActiveTrack?.Rating);
+            //Console.WriteLine(ActiveTrackPicture == null);
         }
 
         #region Commands
@@ -331,7 +367,7 @@ namespace JellyMusic.ViewModels
                         OnPropertyChanged(nameof(IsShuffled));
                         OnPropertyChanged(nameof(NextTrackTitle));
                         OnPropertyChanged(nameof(PreviousTrackTitle));
-                        //OnPropertyChanged(nameof(PlaybackQueue)); uncomment if you want to show shuffled queue
+                        OnPropertyChanged(nameof(PlaybackQueue));
                     },
                     canExecute:
                     obj =>
@@ -429,6 +465,29 @@ namespace JellyMusic.ViewModels
             };
         }
 
+        private async Task InitializeTracksPictures()
+        {
+            IsQueueBeingLoaded = true;
+            OnPropertyChanged(nameof(IsQueueBeingLoaded));
+            foreach (var item in PlaybackQueue)
+            {
+                item.AlbumPictureSource = await PictureCachingService.GetProcessedFileAsync(item);
+            }
+            IsQueueBeingLoaded = false;
+            OnPropertyChanged(nameof(IsQueueBeingLoaded));
+        }
+        private void InitializeTracksRatings()
+        {
+            if (!File.Exists(_ratingsPath))
+            {
+                TracksRatings = new Dictionary<string, byte>();
+            }
+            else
+            {
+                TracksRatings = JsonLite.DeserializeFromFile(_ratingsPath, typeof(Dictionary<string, byte>)) as Dictionary<string, byte>;
+            }
+        }
+
         public bool IsFirstTrackPlaying()
         {
             if (PlaybackQueue == null || !PlaybackQueue.Contains(_activeTrack)) return true;
@@ -461,7 +520,10 @@ namespace JellyMusic.ViewModels
             OnPropertyChanged(nameof(FileSizeInMb));
             OnPropertyChanged(nameof(IsActiveTrackSelected));
             OnPropertyChanged(nameof(ActiveTrackTitle));
+            OnPropertyChanged(nameof(ActiveTrackRating));
         }
+
         #endregion
+
     }
 }

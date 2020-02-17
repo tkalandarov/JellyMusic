@@ -22,6 +22,7 @@ namespace JellyMusic.Models
             set
             {
                 SetProperty(ref _filePath, value);
+                // Used for proper deserialization
                 if (File.Exists(value))
                     OnFilePathChanged();
             }
@@ -49,18 +50,6 @@ namespace JellyMusic.Models
         // Realization of id-gen is in JellyMusic.Core.TagReader
         public string Id { get; set; }
 
-        private byte _rating;
-        public byte Rating
-        {
-            get => _rating;
-            set
-            {
-                SetProperty(ref _rating, value);
-                OnRatingChanged.Invoke(this, new TrackRatingUpdatedEventArgs(Id, value));
-            }
-        }
-
-        public event EventHandler<TrackRatingUpdatedEventArgs> OnRatingChanged;
         #endregion
 
         private void OnFilePathChanged()

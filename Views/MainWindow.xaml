@@ -75,7 +75,7 @@
                           Grid.ColumnSpan="3" Grid.RowSpan="3"
                           MediaEnded="IntroVideo_MediaEnded" UnloadedBehavior="Stop"/>
             <!-- Background image -->
-            <Image Source="{Binding PlaybarVM.ActiveTrack.AlbumPictureSource}"
+            <Image Source="{Binding PlaybarVM.ActiveTrackPicture}"
                    Grid.ColumnSpan="2" Grid.RowSpan="3" 
                    Stretch="UniformToFill"
                    Opacity=".5">
@@ -152,7 +152,7 @@
             <!-- Content Area -->
             <materialDesign:Transitioner x:Name="ContentTransitioner" SelectedIndex="0"
                                              Grid.Row="1" Grid.Column="1" Margin="10">
-                <uc:HomeContent x:Name="HomeContent"/>
+                <uc:TracksContent x:Name="HomeContent"/>
 
                 <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
 

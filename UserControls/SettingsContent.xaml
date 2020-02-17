@@ -45,7 +45,7 @@
                 </StackPanel>
 
                 <ToggleButton x:Name="IntroToggle" Click="IntroToggle_Clcik"
-                                      HorizontalAlignment="Right"/>
+                                      HorizontalAlignment="Right" Margin="20"/>
             </Grid>
 
             <!--Mute startup animation-->
@@ -60,7 +60,7 @@
                 </StackPanel>
 
                 <ToggleButton x:Name="IntroSoundToggle" Click="IntroMutedToggle_Click"
-                                  HorizontalAlignment="Right"/>
+                                  HorizontalAlignment="Right" Margin="20"/>
             </Grid>
 
             <!--Enable virtualization-->
@@ -77,7 +77,7 @@
 
                 <!-- Restart dialog invocation is in MainWindow.xaml.cs-->
                 <ToggleButton x:Name="VirtualizationToggle" Click="VirtualizationToggle_Click"
-                              HorizontalAlignment="Right"/>
+                              HorizontalAlignment="Right" Margin="20"/>
             </Grid>
         </StackPanel>
     </Grid>

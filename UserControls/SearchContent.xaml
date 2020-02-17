@@ -58,14 +58,15 @@
                     <Grid Width="1070">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
-                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="20*"/>
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" 
                                     BorderBrush="Gray"
-                                    HorizontalAlignment="Left" BorderThickness="1" CornerRadius="10" Width="60">
+                                    HorizontalAlignment="Left" BorderThickness="1" CornerRadius="10" Width="50" Height="50">
                             <Border.Background>
-                                <ImageBrush ImageSource="{Binding AlbumPictureSource, IsAsync=True}"/>
+                                <ImageBrush ImageSource="{Binding AlbumPictureSource, IsAsync=True, TargetNullValue=Assets/music_icon.png}" Stretch="UniformToFill"/>
                             </Border.Background>
+                            
                         </Border>
                         <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,5">
                             <TextBlock Text="{Binding Title}" FontSize="20" TextTrimming="CharacterEllipsis"/>

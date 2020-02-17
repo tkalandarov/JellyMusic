@@ -30,7 +30,7 @@
                         Style="{StaticResource MaterialDesignCircularProgressBar}"
                         Width="200" Height="200" 
                         IsIndeterminate="True"/>
-                    <TextBlock Text="WAITING..."
+                    <TextBlock Text="LOADING..."
                                Foreground="{StaticResource Text.Main}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"
                                FontSize="20"/>

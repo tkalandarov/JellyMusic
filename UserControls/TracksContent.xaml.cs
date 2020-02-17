@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,15 +16,16 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using JellyMusic.Core;
+using JellyMusic.Models;
 
 namespace JellyMusic.UserControls
 {
     /// <summary>
     /// Interaction logic for HomeContent.xaml
     /// </summary>
-    public partial class HomeContent : UserControl
+    public partial class TracksContent : UserControl
     {
-        public HomeContent()
+        public TracksContent()
         {
             InitializeComponent();
         }

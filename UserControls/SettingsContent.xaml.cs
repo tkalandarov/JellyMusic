@@ -21,6 +21,8 @@ namespace JellyMusic.UserControls
     public partial class SettingsContent : UserControl
     {
         public event Action AppRestartRequired;
+        private bool _oldVirtValue = App.Settings.Virtualization;
+
         public SettingsContent()
         {
             InitializeComponent();
@@ -47,18 +49,21 @@ namespace JellyMusic.UserControls
 
         private void VirtualizationToggle_Click(object sender, RoutedEventArgs e)
         {
-            App.Settings.Virtualization = VirtualizationToggle.IsChecked.HasValue && VirtualizationToggle.IsChecked.Value;
+            bool ToggleValue = VirtualizationToggle.IsChecked.HasValue && VirtualizationToggle.IsChecked.Value;
+
+            if (ToggleValue == _oldVirtValue)
+                return;
+
+            App.Settings.Virtualization = ToggleValue;
             AppRestartRequired.Invoke();
         }
 
         private void ResetDefaultsButton_Click(object sender, RoutedEventArgs e)
         {
-            bool oldVirtValue = App.Settings.Virtualization;
-
             App.CreateDedaultAppSettings();
             AssignSettingsValues();
 
-            if (App.Settings.Virtualization != oldVirtValue)
+            if (App.Settings.Virtualization != _oldVirtValue)
                 AppRestartRequired.Invoke();
         }
     }

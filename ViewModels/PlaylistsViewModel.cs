@@ -19,7 +19,7 @@ namespace JellyMusic.ViewModels
         private readonly JsonService<Playlist> _serializer;
 
         public BindingList<Playlist> PlaylistsCollection { get; set; }
-        public BindingList<AudioFile> AllTracks { get; private set; }
+        //public BindingList<AudioFile> AllTracks { get; private set; }
 
         private string _searchPattern;
         public string SearchPattern
@@ -37,9 +37,19 @@ namespace JellyMusic.ViewModels
             get
             {
                 if (String.IsNullOrEmpty(SearchPattern) || String.IsNullOrWhiteSpace(SearchPattern)) return null;
+
+                var allTracks = new BindingList<AudioFile>();
+                foreach (var playlist in PlaylistsCollection)
+                {
+                    foreach (var track in playlist.TrackList)
+                    {
+                        if (allTracks.Any(x => x.FilePath == track.FilePath)) continue;
+                        allTracks.Add(track);
+                    }
+                }
                 var result = new BindingList<AudioFile>();
 
-                List<AudioFile> temp = new List<AudioFile>(AllTracks.Where(item =>
+                List<AudioFile> temp = new List<AudioFile>(allTracks.Where(item =>
                 item.Title != null && item.Title.IndexOf(SearchPattern, StringComparison.CurrentCultureIgnoreCase) != -1 ||
                 item.Album != null && item.Album.IndexOf(SearchPattern, StringComparison.CurrentCultureIgnoreCase) != -1 ||
                 item.Performer != null && item.Performer.IndexOf(SearchPattern, StringComparison.CurrentCultureIgnoreCase) != -1).ToList());
@@ -53,8 +63,6 @@ namespace JellyMusic.ViewModels
             }
         }
 
-        public bool EnableRatingsUpdateRequests { get; set; }
-        public event EventHandler<TrackRatingUpdatedEventArgs> RatingsUpdateRequested;
         #endregion
 
         public PlaylistsViewModel()
@@ -72,8 +80,8 @@ namespace JellyMusic.ViewModels
             File.Create(Path.Combine(PlaylistsDir, "RESTART THE APP IN CASE OF CHANGES"));
 
             LoadPlaylists();
-            LoadAllTracks();
-            PerformCaching();
+            //LoadAllTracks();
+            //AssignAlbumPictures();
         }
 
         #region Methods
@@ -104,7 +112,7 @@ namespace JellyMusic.ViewModels
                 AddPlaylist("Default", Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
             }
         }
-        private void LoadAllTracks()
+        /*private void LoadAllTracks()
         {
             if (AllTracks == null) AllTracks = new BindingList<AudioFile>();
 
@@ -114,34 +122,34 @@ namespace JellyMusic.ViewModels
                 {
                     if (File.Exists(playlist.TrackList[i].FilePath))
                     {
-                        // If AllTracks already has this track in another playlist
-                        if (AllTracks.Any(x => x.FilePath == playlist.TrackList[i].FilePath))
-                        {
-                            // Assign this track
-                            playlist.TrackList[i] = AllTracks.Single(x => x.FilePath == playlist.TrackList[i].FilePath);
-                        }
-                        else
-                        {
-                            // Add track to AllTracks
-                            AllTracks.Add(playlist.TrackList[i]);
-                            playlist.TrackList[i].OnRatingChanged += OnTrackRatingChanged;
-                        }
+                    // If AllTracks already has this track in another playlist
+                    if (AllTracks.Any(x => x.FilePath == playlist.TrackList[i].FilePath))
+                    {
+                        // Assign this track
+                        playlist.TrackList[i] = AllTracks.Single(x => x.FilePath == playlist.TrackList[i].FilePath);
                     }
+                    else
+                    {
+                        // Add track to AllTracks
+                        AllTracks.Add(playlist.TrackList[i]);
+                        playlist.TrackList[i].OnRatingChanged += OnTrackRatingChanged;
+                    }
+                    //}
                 }
             }
 
             AllTracks.ListChanged += (object sender, ListChangedEventArgs e) =>
             {
-                  OnPropertyChanged(nameof(SearchFilteredTracks));
+                OnPropertyChanged(nameof(SearchFilteredTracks));
             };
-        }
-        private void PerformCaching()
+        }*/
+        /*private void AssignAlbumPictures()
         {
             PictureCachingService cachingService = new PictureCachingService(AllTracks);
             cachingService.CacheAndAssign();
 
             AllTracks = cachingService.Tracks;
-        }
+        }*/
 
         public void AddPlaylist(string Name, IEnumerable<string> trackPaths)
         {
@@ -149,25 +157,33 @@ namespace JellyMusic.ViewModels
 
             foreach (var path in trackPaths)
             {
-                if (AllTracks.Any(x => x.FilePath == path))
+                foreach (var playlist in PlaylistsCollection)
+                {
+                    if (playlist.TrackList.Any(x => x.FilePath == path))
+                    {
+                        newPlaylist.TrackList.Add(playlist.TrackList.Single(x => x.FilePath == path));
+                        return;
+                    }
+                }
+                /*if (AllTracks.Any(x => x.FilePath == path))
                 {
                     newPlaylist.TrackList.Add(AllTracks.Single(x => x.FilePath == path));
                 }
                 else
+                {*/
+                using (TagReader reader = new TagReader(path))
                 {
-                    using (TagReader reader = new TagReader(path))
-                    {
-                        AudioFile newTrack = reader.GetPlaylistTrack();
-                        newPlaylist.TrackList.Add(newTrack);
-                    }
+                    AudioFile newTrack = reader.GetPlaylistTrack();
+                    newPlaylist.TrackList.Add(newTrack);
                 }
+                //}
             }
 
             PlaylistsCollection.Add(newPlaylist);
             SavePlaylist(newPlaylist);
 
-            LoadAllTracks();
-            PerformCaching();
+            //LoadAllTracks();
+            //AssignAlbumPictures();
         }
         public void AddPlaylist(string Name, string folderPath)
         {
@@ -176,19 +192,19 @@ namespace JellyMusic.ViewModels
             PlaylistsCollection.Add(newPlaylist);
             SavePlaylist(newPlaylist);
 
-            LoadAllTracks();
-            PerformCaching();
+            //LoadAllTracks();
+            //AssignAlbumPictures();
         }
         private void SavePlaylist(Playlist playlist)
         {
             _serializer.SerializeToFile(playlist.Name + ".json", playlist);
         }
 
-        private void OnTrackRatingChanged(object sender, TrackRatingUpdatedEventArgs e)
+        /*private void OnTrackRatingChanged(object sender, TrackRatingUpdatedEventArgs e)
         {
             if (EnableRatingsUpdateRequests)
                 RatingsUpdateRequested.Invoke(sender, e);
-        }
+        }*/
         #endregion
     }
 }
