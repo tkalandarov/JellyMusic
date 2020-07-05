@@ -1,184 +1,97 @@
-﻿<Window x:Class="JellyMusic.Views.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:ViewModels="clr-namespace:JellyMusic.ViewModels"
-        xmlns:Views="clr-namespace:JellyMusic.Views"
-        xmlns:uc="clr-namespace:JellyMusic.UserControls"
-        
-        xmlns:main="clr-namespace:JellyMusic"
-        mc:Ignorable="d"
-                     
-        d:DataContext="{d:DesignInstance ViewModels:MainViewModel}"
-                
-        Title="JellyMusic" 
-        Height="700" Width="1200"
-        ResizeMode="CanMinimize"
-        WindowStartupLocation="CenterScreen"
-        
-        TextElement.Foreground="White"
-        TextElement.FontWeight="Regular"
-        TextElement.FontSize="15"
-        TextOptions.TextFormattingMode="Ideal" 
-        FontFamily="Arial"
-        Background="{StaticResource Background.Gradient.Main}">
+﻿<Window
+    x:Class="JellyMusic.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ViewModels="clr-namespace:JellyMusic.ViewModels"
+    xmlns:Views="clr-namespace:JellyMusic.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:main="clr-namespace:JellyMusic"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:JellyMusic.UserControls"
+    Title="JellyMusic"
+    Width="1200"
+    Height="700"
+    d:DataContext="{d:DesignInstance ViewModels:MainViewModel}"
+    FontFamily="./#Comfortaa Light"
+    ResizeMode="CanMinimize"
+    TextElement.FontSize="15"
+    TextElement.FontWeight="Regular"
+    TextElement.Foreground="White"
+    TextOptions.TextFormattingMode="Ideal"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d" Background="{DynamicResource Panel.NonTransparent}">
     <WindowChrome.WindowChrome>
-        <WindowChrome 
-            GlassFrameThickness="0" 
-            CornerRadius="0" 
-            CaptionHeight="0" 
-            UseAeroCaptionButtons="False" 
+        <WindowChrome
+            CaptionHeight="0"
+            CornerRadius="0"
+            GlassFrameThickness="0"
             ResizeBorderThickness="7"
-            />
+            UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
-    <Window.Resources>
-        <Storyboard x:Key="OpenSideMenu">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="SideMenu">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="150"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Key="CloseSideMenu">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="SideMenu">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="60"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Key="Startup">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HomeContent">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:3" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Key="VideoFade">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="IntroVideo">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0.985"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-    </Window.Resources>
-    <Border BorderBrush="Transparent"
-            BorderThickness='1'>
+    <Border BorderBrush="Transparent" BorderThickness="0">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="32"/>
-                <RowDefinition Height="5*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="32" />
+                <RowDefinition Height="5*" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <!-- Intro video -->
-            <MediaElement x:Name="IntroVideo"
-                          Grid.ColumnSpan="3" Grid.RowSpan="3"
-                          MediaEnded="IntroVideo_MediaEnded" UnloadedBehavior="Stop"/>
-            <!-- Background image -->
-            <Image Source="{Binding PlaybarVM.ActiveTrackPicture}"
-                   Grid.ColumnSpan="2" Grid.RowSpan="3" 
-                   Stretch="UniformToFill"
-                   Opacity=".5">
+            <!--  Background image  -->
+            <Image
+                Grid.RowSpan="3"
+                Grid.ColumnSpan="2"
+                Opacity=".5"
+                Source="{Binding PlaybarVM.ActiveTrackPicture}"
+                Stretch="UniformToFill">
                 <Image.Effect>
-                    <BlurEffect Radius="25"/>
+                    <BlurEffect Radius="25" />
                 </Image.Effect>
             </Image>
-            <!-- Title Bar -->
-            <Grid MouseDown="OnDragMoveWindow"
-                  Grid.Row="0" Grid.ColumnSpan="2">
-                <Rectangle Fill="{StaticResource Panel.Semitransparent}"/>
-                <TextBlock Text="JellyMusic (Pre-release)"
-                           HorizontalAlignment="Left" Margin="15,0"
-                           VerticalAlignment="Center"/>
-                <StackPanel Orientation="Horizontal" 
-                                    HorizontalAlignment="Right">
-                    <Button x:Name="WindowMinimizeButton" 
-                                    Style="{StaticResource MaterialDesignFlatButton}"
-                                    Click="WindowMinimizeButton_Click" Height="auto">
-                        <materialDesign:PackIcon Kind="Minus" Width="Auto" Height="Auto"/>
-                    </Button>
-                    <Button x:Name="WindowCloseButton" 
-                                    Style="{StaticResource MaterialDesignFlatButton}" 
-                                    Foreground="Red" 
-                                    Click="WindowCloseButton_Click" Height="Auto">
-                        <materialDesign:PackIcon Kind="Power" Width="Auto" Height="Auto"/>
-                    </Button>
-                </StackPanel>
-            </Grid>
-            <!-- Side menu -->
-            <Grid x:Name="SideMenu" 
-                  Grid.Row="1" Grid.Column="0"
-                  HorizontalAlignment="Left"
-                  Width="60">
-                <Rectangle Fill="{StaticResource Panel.Semitransparent}"/>
-                <StackPanel>
-                    <ToggleButton x:Name="ButtonOpenSideMenu"
-                                  Style="{DynamicResource  MaterialDesignHamburgerToggleButton}"
-                                  Width="40" Height="40"
-                                  HorizontalAlignment="Right"
-                                  Margin="10"
-                                  Checked="ButtonOpenSideMenu_Checked"
-                                  Unchecked="ButtonOpenSideMenu_Unchecked"/>
-                    <Image Height="80" VerticalAlignment="Bottom"/>
-                    <ListView x:Name="ListViewMenu" 
-                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListViewItem x:Name="ItemHome" Height="60" Selected="ItemTracks_Selected">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Music" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="TRACKS" VerticalAlignment="Center" Margin="5"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem x:Name="ItemPlaylists" Height="60" Selected="ItemPlaylists_Selected">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="PlaylistMusicOutline" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="PLAYLISTS" VerticalAlignment="Center" Margin="5"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem x:Name="ItemSearch" Height="60" Selected="ItemSearch_Selected">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Search" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="SEARCH" VerticalAlignment="Center"  Margin="5"/>
-                            </StackPanel>
-                        </ListViewItem>
-                        <ListViewItem x:Name="ItemSettings" Height="60" Selected="ItemSettings_Selected">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="SettingsOutline" Height="25" Width="25" Margin="10"/>
-                                <TextBlock Text="SETTINGS" VerticalAlignment="Center"  Margin="5"/>
-                            </StackPanel>
-                        </ListViewItem>
-                    </ListView>
-                </StackPanel>
-            </Grid>
-            <!-- Content Area -->
-            <materialDesign:Transitioner x:Name="ContentTransitioner" SelectedIndex="0"
-                                             Grid.Row="1" Grid.Column="1" Margin="10">
-                <uc:TracksContent x:Name="HomeContent"/>
-
-                <materialDesign:TransitionerSlide OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
-
-                    <materialDesign:TransitionerSlide.BackwardWipe>
-                        <materialDesign:SlideOutWipe/>
-                    </materialDesign:TransitionerSlide.BackwardWipe>
-
-                    <uc:PlaylistsContent x:Name="PlaylistContent"/>
-                </materialDesign:TransitionerSlide>
-
-                <uc:SearchContent x:Name="SearchContent"/>
-                <uc:SettingsContent x:Name="SettingsContent"/>
+            <!--  Title Bar  -->
+            <Views:TitleBar Grid.Row="0" Grid.ColumnSpan="2" />
+            <!--  Side menu  -->
+            <Views:SideMenu
+                x:Name="SideMenu"
+                Grid.Row="1"
+                Grid.Column="0"
+                HorizontalAlignment="Left" />
+            <!--  Content Area  -->
+            <materialDesign:Transitioner
+                x:Name="ContentTransitioner"
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="10"
+                SelectedIndex="0">
+                <uc:TracksContent x:Name="HomeContent" />
+                <uc:PlaylistsContent x:Name="PlaylistContent" />
+                <uc:SearchContent x:Name="SearchContent" />
+                <uc:SettingsContent x:Name="SettingsContent" />
             </materialDesign:Transitioner>
-            <!-- Media control -->
-            <Views:PlaybarView x:Name="Playbar"
-                  Grid.Row="2" Grid.ColumnSpan="2"/>
-            <uc:NewPlaylistDialog x:Name="NewPlaylistDialog"
-                                  Visibility="Collapsed"
-                                  Width="600" Height="360" 
-                                  Grid.ColumnSpan="3" Grid.RowSpan="2"
-                                  materialDesign:ShadowAssist.ShadowDepth="Depth4"/>
-            <uc:RestartAppDialog x:Name="RestartDialog"
-                                  Visibility="Collapsed"
-                                  Width="600" Height="360" 
-                                  Grid.ColumnSpan="3" Grid.RowSpan="2"
-                                  materialDesign:ShadowAssist.ShadowDepth="Depth4"/>
+            <!--  Media control  -->
+            <Views:PlaybarView
+                x:Name="Playbar"
+                Grid.Row="2"
+                Grid.ColumnSpan="2" />
+            <uc:NewPlaylistDialog
+                x:Name="NewPlaylistDialog"
+                Grid.RowSpan="2"
+                Grid.ColumnSpan="3"
+                Width="600"
+                Height="360"
+                materialDesign:ShadowAssist.ShadowDepth="Depth4"
+                Visibility="Collapsed" />
+            <uc:RestartAppDialog
+                x:Name="RestartDialog"
+                Grid.RowSpan="2"
+                Grid.ColumnSpan="3"
+                Width="600"
+                Height="360"
+                materialDesign:ShadowAssist.ShadowDepth="Depth4"
+                Visibility="Collapsed" />
         </Grid>
     </Border>
 </Window>

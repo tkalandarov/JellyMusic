@@ -1,0 +1,112 @@
+﻿<UserControl
+    x:Class="JellyMusic.Views.SideMenu"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:JellyMusic.Views"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="530"
+    d:DesignWidth="60"
+    FontFamily="./#Comfortaa Light"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Storyboard x:Key="OpenSideMenu">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Wrapper" Storyboard.TargetProperty="(FrameworkElement.Width)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="150" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="CloseSideMenu">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Wrapper" Storyboard.TargetProperty="(FrameworkElement.Width)">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="60" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+    <!--  Side menu  -->
+    <Grid x:Name="Wrapper" Width="60">
+        <Rectangle Fill="{StaticResource Panel.Semitransparent}" />
+        <StackPanel>
+            <ToggleButton
+                x:Name="ButtonOpenSideMenu"
+                Width="40"
+                Height="40"
+                Margin="10"
+                HorizontalAlignment="Right"
+                Checked="ButtonOpenSideMenu_Checked"
+                Cursor="Hand"
+                Foreground="White"
+                Style="{DynamicResource MaterialDesignHamburgerToggleButton}"
+                Unchecked="ButtonOpenSideMenu_Unchecked" />
+            <Image Height="80" VerticalAlignment="Bottom" />
+            <ListView
+                x:Name="ListViewMenu"
+                Cursor="Hand"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListViewItem
+                    x:Name="ItemHome"
+                    Height="60"
+                    Selected="ItemTracks_Selected">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="25"
+                            Height="25"
+                            Margin="10"
+                            Kind="Music" />
+                        <TextBlock
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Text="TRACKS" />
+                    </StackPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="ItemPlaylists"
+                    Height="60"
+                    Selected="ItemPlaylists_Selected">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="25"
+                            Height="25"
+                            Margin="10"
+                            Kind="PlaylistMusicOutline" />
+                        <TextBlock
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Text="PLAYLISTS" />
+                    </StackPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="ItemSearch"
+                    Height="60"
+                    Selected="ItemSearch_Selected">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="25"
+                            Height="25"
+                            Margin="10"
+                            Kind="Search" />
+                        <TextBlock
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Text="SEARCH" />
+                    </StackPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="ItemSettings"
+                    Height="60"
+                    Selected="ItemSettings_Selected">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="25"
+                            Height="25"
+                            Margin="10"
+                            Kind="SettingsOutline" />
+                        <TextBlock
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Text="SETTINGS" />
+                    </StackPanel>
+                </ListViewItem>
+            </ListView>
+        </StackPanel>
+    </Grid>
+</UserControl>

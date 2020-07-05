@@ -27,24 +27,17 @@ namespace JellyMusic.UserControls
         {
             InitializeComponent();
 
-            AssignSettingsValues();
+            Loaded += (s, e) =>
+            {
+                AssignSettingsValues();
+            };
         }
 
         private void AssignSettingsValues()
         {
-            IntroToggle.IsChecked = App.Settings.IntroEnabled;
-            IntroSoundToggle.IsChecked = App.Settings.IntroMuted;
-            VirtualizationToggle.IsChecked = App.Settings.Virtualization;
-        }
+            if (App.Settings == null) return;
 
-        private void IntroToggle_Clcik(object sender, RoutedEventArgs e)
-        {
-            App.Settings.IntroEnabled = IntroToggle.IsChecked.HasValue && IntroToggle.IsChecked.Value;
-        }
-
-        private void IntroMutedToggle_Click(object sender, RoutedEventArgs e)
-        {
-            App.Settings.IntroMuted = IntroSoundToggle.IsChecked.HasValue && IntroSoundToggle.IsChecked.Value;
+            VirtualizationToggle.IsChecked = App.Settings?.Virtualization;
         }
 
         private void VirtualizationToggle_Click(object sender, RoutedEventArgs e)

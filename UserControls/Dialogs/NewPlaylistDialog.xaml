@@ -1,62 +1,77 @@
-﻿<UserControl x:Class="JellyMusic.UserControls.NewPlaylistDialog"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="600"
-             
-             TextElement.Foreground="White"
-             TextElement.FontWeight="Regular"
-             TextElement.FontSize="15"
-             TextOptions.TextFormattingMode="Ideal" 
-             FontFamily="Open Sans">
+﻿<UserControl
+    x:Class="JellyMusic.UserControls.NewPlaylistDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="400"
+    d:DesignWidth="600"
+    FontFamily="Open Sans"
+    TextElement.FontSize="15"
+    TextElement.FontWeight="Regular"
+    TextElement.Foreground="White"
+    TextOptions.TextFormattingMode="Ideal"
+    mc:Ignorable="d">
 
     <Grid>
-        <Rectangle Fill="{StaticResource Panel.NonTransparent}" Opacity=".8" 
-                   RadiusX="20" RadiusY="20"/>
+        <Rectangle
+            Fill="{StaticResource Panel.NonTransparent}"
+            Opacity=".8"
+            RadiusX="20"
+            RadiusY="20" />
         <StackPanel>
-            <TextBlock Foreground="{StaticResource Text.Main}" 
-                   FontSize="35"
-                   Padding="20"
-                   Text="NEW PLAYLIST"
-                   HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <TextBlock Text="Name:"
-                   FontSize="20" 
-                   Foreground="{StaticResource Text.Secondary}"
-                   HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <TextBox x:Name="NewPlaylistName"
-                     TextChanged="NewPlaylistName_TextChanged"
-                     Width="300"
-                     FontSize="25"
-                     TextAlignment="Center"
-                     Margin="0,0,0,40"/>
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
-                <TextBlock Text="Folder Based"
-                           FontSize="25"/>
-                <ToggleButton x:Name="TypeToggle" Margin="20,0"/>
-                <TextBlock Text="Select Files"
-                           FontSize="25"/>
+            <TextBlock
+                Padding="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                FontSize="35"
+                Foreground="{StaticResource Text.Main}"
+                Text="NEW PLAYLIST" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                FontSize="20"
+                Foreground="{StaticResource Text.Secondary}"
+                Text="Name:" />
+            <TextBox
+                x:Name="NewPlaylistName"
+                Width="300"
+                Margin="0,0,0,40"
+                FontSize="25"
+                TextAlignment="Center"
+                TextChanged="NewPlaylistName_TextChanged" />
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock FontSize="25" Text="Folder Based" />
+                <ToggleButton x:Name="TypeToggle" Margin="20,0" />
+                <TextBlock FontSize="25" Text="Select Files" />
             </StackPanel>
         </StackPanel>
 
-        <Button x:Name="CreateBttn"
-                IsEnabled="False"
-                Content="CREATE"
-                Width="250" Height="80"
-                FontSize="25" Foreground="{StaticResource Text.Main}"
-                Style="{DynamicResource MaterialDesignFlatButton}" 
-                HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                Margin="20"/>
-        <Button x:Name="CancelBttn"
-                Content="CANCEL"
-                Width="250" Height="80"
-                FontSize="25" Foreground="{StaticResource Text.Main}"
-                Style="{DynamicResource MaterialDesignFlatButton}" 
-                HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                Margin="20" Click="CancelBttn_Click"/>
+        <Button
+            x:Name="CreateBttn"
+            Width="250"
+            Height="80"
+            Margin="20"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Content="CREATE"
+            FontSize="25"
+            Foreground="{StaticResource Text.Main}"
+            IsEnabled="False"
+            Style="{DynamicResource MaterialDesignFlatButton}" />
+        <Button
+            x:Name="CancelBttn"
+            Width="250"
+            Height="80"
+            Margin="20"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Click="CancelBttn_Click"
+            Content="CANCEL"
+            FontSize="25"
+            Foreground="{StaticResource Text.Main}"
+            Style="{DynamicResource MaterialDesignFlatButton}" />
 
     </Grid>
 </UserControl>

@@ -17,18 +17,6 @@ namespace JellyMusic.Views
         {
             InitializeComponent();
 
-            // Play startup animation if enabled
-            if (App.Settings.IntroEnabled)
-            {
-                Storyboard sb = FindResource("Startup") as Storyboard;
-                sb.Begin();
-
-                if (App.Settings.IntroMuted)
-                    IntroVideo.Source = new Uri("pack://siteoforigin:,,,/Assets/Intro.mov", UriKind.Absolute);
-                else
-                    IntroVideo.Source = new Uri("pack://siteoforigin:,,,/Assets/IntroSound.mov", UriKind.Absolute);
-            }
-
             MainVM = new MainViewModel();
             Playbar.SetViewModel(MainVM.PlaybarVM);
 
@@ -86,58 +74,11 @@ namespace JellyMusic.Views
 
         }
 
-        private void IntroVideo_MediaEnded(object sender, RoutedEventArgs e)
-        {
-            Storyboard sb = FindResource("VideoFade") as Storyboard;
-            sb.Completed += (sndr, args) =>
-            {
-                IntroVideo.Source = null;
-            };
-            sb.Begin();
-        }
 
-
-        private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
+        public void OnWindowClose()
         {
             MainVM.PlaybarVM.AudioPlayer?.Dispose();
             Close();
-        }
-        private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
-        private void OnDragMoveWindow(object sender, MouseButtonEventArgs e)
-        {
-            DragMove();
-        }
-
-        private void ButtonOpenSideMenu_Checked(object sender, RoutedEventArgs e)
-        {
-            Storyboard sb = FindResource("OpenSideMenu") as Storyboard;
-            sb.Begin();
-        }
-        private void ButtonOpenSideMenu_Unchecked(object sender, RoutedEventArgs e)
-        {
-            Storyboard sb = FindResource("CloseSideMenu") as Storyboard;
-            sb.Begin();
-        }
-
-        private void ItemTracks_Selected(object sender, RoutedEventArgs e)
-        {
-            ContentTransitioner.SelectedIndex = 0;
-        }
-        private void ItemPlaylists_Selected(object sender, RoutedEventArgs e)
-        {
-            ContentTransitioner.SelectedIndex = 1;
-        }
-        private void ItemSearch_Selected(object sender, RoutedEventArgs e)
-        {
-            ContentTransitioner.SelectedIndex = 2;
-        }
-        private void ItemSettings_Selected(object sender, RoutedEventArgs e)
-        {
-            ContentTransitioner.SelectedIndex = 3;
         }
     }
 }
