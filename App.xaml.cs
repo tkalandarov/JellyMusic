@@ -40,11 +40,11 @@ namespace JellyMusic
         {
             if (!File.Exists(SettingsPath))
             {
-                CreateDedaultAppSettings();
+                CreateDefaultAppSettings();
             }
             Settings = JsonLite.DeserializeFromFile(SettingsPath, typeof(AppSettings)) as AppSettings;
         }
-        public static void CreateDedaultAppSettings()
+        public static void CreateDefaultAppSettings()
         {
             Settings = new AppSettings();
             JsonLite.SerializeToFile(SettingsPath, Settings);

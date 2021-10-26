@@ -17,6 +17,15 @@ namespace JellyMusic.Views
         {
             InitializeComponent();
 
+            // Play startup animation if enabled
+            if (App.Settings.IntroEnabled)
+            {
+                Storyboard sb = FindResource("Startup") as Storyboard;
+                sb.Begin();
+
+                IntroVideo.Source = new Uri("pack://siteoforigin:,,,/Assets/Intro.mov", UriKind.Absolute);
+            }
+
             MainVM = new MainViewModel();
             Playbar.SetViewModel(MainVM.PlaybarVM);
 
@@ -38,7 +47,8 @@ namespace JellyMusic.Views
 
                         if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            if (dialog.FileNames.Length == 0) return;
+                            if (dialog.FileNames.Length == 0)
+                                return;
 
                             MainVM.PlaylistsVM.AddPlaylist(NewPlaylistDialog.NewPlaylistName.Text, dialog.FileNames);
                         }
@@ -74,11 +84,27 @@ namespace JellyMusic.Views
 
         }
 
+        private void IntroVideo_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            Storyboard sb = FindResource("VideoFade") as Storyboard;
+            sb.Completed += (sndr, args) =>
+            {
+                //IntroVideo.Source = null;
+            };
+            sb.Begin();
+        }
 
         public void OnWindowClose()
         {
             MainVM.PlaybarVM.AudioPlayer?.Dispose();
             Close();
+        }
+
+        private void IntroVideo_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer();
+            player.SoundLocation = @"Assets/Startup.wav";
+            player.Play();
         }
     }
 }

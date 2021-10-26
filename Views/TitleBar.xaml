@@ -23,7 +23,7 @@
             Margin="15,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            Text="JellyMusic 1.0" />
+            Text="JellyMusic 1.01" />
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
             <Button
                 x:Name="WindowMinimizeButton"

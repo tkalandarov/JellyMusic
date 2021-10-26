@@ -157,26 +157,19 @@ namespace JellyMusic.ViewModels
 
             foreach (var path in trackPaths)
             {
-                foreach (var playlist in PlaylistsCollection)
+                var loadedTracks = PlaylistsCollection.Select(x => x.TrackList).SelectMany(x => x).Distinct().ToList();
+                if (loadedTracks.Any(x => x.FilePath == path))
                 {
-                    if (playlist.TrackList.Any(x => x.FilePath == path))
-                    {
-                        newPlaylist.TrackList.Add(playlist.TrackList.Single(x => x.FilePath == path));
-                        return;
-                    }
-                }
-                /*if (AllTracks.Any(x => x.FilePath == path))
-                {
-                    newPlaylist.TrackList.Add(AllTracks.Single(x => x.FilePath == path));
+                    newPlaylist.TrackList.Add(loadedTracks.First(x => x.FilePath == path));
                 }
                 else
-                {*/
-                using (TagReader reader = new TagReader(path))
                 {
-                    AudioFile newTrack = reader.GetPlaylistTrack();
-                    newPlaylist.TrackList.Add(newTrack);
+                    using (TagReader reader = new TagReader(path))
+                    {
+                        AudioFile newTrack = reader.GetPlaylistTrack();
+                        newPlaylist.TrackList.Add(newTrack);
+                    }
                 }
-                //}
             }
 
             PlaylistsCollection.Add(newPlaylist);

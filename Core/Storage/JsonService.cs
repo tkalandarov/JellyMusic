@@ -62,7 +62,7 @@ namespace JellyMusic.Core
         {
             try
             {
-                // serialize JSON directly to a file
+                // Deserialize JSON from a file
                 using (StreamReader reader = File.OpenText(filePath))
                 {
                     JsonSerializer serializer = new JsonSerializer();

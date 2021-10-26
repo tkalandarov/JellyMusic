@@ -166,9 +166,17 @@ namespace JellyMusic.Models
         {
             foreach (var path in IOService.GetFilesByExtensions(BaseFolderPath, SearchOption.AllDirectories, ".mp3"))
             {
-                using (TagReader tagReader = new TagReader(path))
+                try
                 {
-                    TrackList.Add(tagReader.GetPlaylistTrack());
+                    using (TagReader tagReader = new TagReader(path))
+                    {
+                        TrackList.Add(tagReader.GetPlaylistTrack());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occured! " + ex.Message);
+                    continue;
                 }
             }
         }

@@ -20,7 +20,7 @@
     TextElement.Foreground="White"
     TextOptions.TextFormattingMode="Ideal"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d" Background="{DynamicResource Panel.NonTransparent}">
+    mc:Ignorable="d" Background="#181A1E">
     <WindowChrome.WindowChrome>
         <WindowChrome
             CaptionHeight="0"
@@ -29,6 +29,21 @@
             ResizeBorderThickness="7"
             UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <Storyboard x:Key="Startup">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HomeContent">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:3" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="VideoFade">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="IntroVideo">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.985"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
     <Border BorderBrush="Transparent" BorderThickness="0">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -40,7 +55,13 @@
                 <RowDefinition Height="5*" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <!--  Background image  -->
+            <!-- Intro video -->
+            <MediaElement x:Name="IntroVideo"
+                          Grid.ColumnSpan="3" Grid.RowSpan="3"
+                          MediaEnded="IntroVideo_MediaEnded"
+                          MediaOpened="IntroVideo_MediaOpened"
+                          UnloadedBehavior="Pause"/>
+            <!-- Background image  -->
             <Image
                 Grid.RowSpan="3"
                 Grid.ColumnSpan="2"

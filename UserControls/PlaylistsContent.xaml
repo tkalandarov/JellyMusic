@@ -49,6 +49,7 @@
                     Style="{StaticResource MaterialDesignToolButton}"
                     ToolTip="Open playlist directory">
                     <materialDesign:PackIcon
+                        Foreground="White"
                         Width="Auto"
                         Height="Auto"
                         Kind="Folder" />
@@ -63,6 +64,7 @@
                     Style="{StaticResource MaterialDesignToolButton}"
                     ToolTip="Create a playlist">
                     <materialDesign:PackIcon
+                        Foreground="White"
                         Width="Auto"
                         Height="Auto"
                         Kind="PlaylistAdd" />

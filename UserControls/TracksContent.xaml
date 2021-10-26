@@ -65,6 +65,7 @@
                         Style="{StaticResource MaterialDesignToolButton}"
                         ToolTip="Sort by">
                         <materialDesign:PackIcon
+                            Foreground="White"
                             Width="Auto"
                             Height="Auto"
                             Kind="SortVariant" />
@@ -79,6 +80,7 @@
                         Style="{StaticResource MaterialDesignToolButton}"
                         ToolTip="Scroll to active track">
                         <materialDesign:PackIcon
+                            Foreground="White"
                             Width="Auto"
                             Height="Auto"
                             Kind="MapMarkerCheck" />

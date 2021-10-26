@@ -53,7 +53,7 @@ namespace JellyMusic.UserControls
 
         private void ResetDefaultsButton_Click(object sender, RoutedEventArgs e)
         {
-            App.CreateDedaultAppSettings();
+            App.CreateDefaultAppSettings();
             AssignSettingsValues();
 
             if (App.Settings.Virtualization != _oldVirtValue)
