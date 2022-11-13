@@ -1,3 +1,7 @@
+[![C# Badge](https://img.shields.io/badge/-C%23-blueviolet?style=flat&logo=Csharp&logoColor=white)](https://learn.microsoft.com/en-us/dotnet/csharp/)
+[![.NET Badge](https://img.shields.io/badge/-WPF-blue?style=flat&logo=.NET&logoColor=white)](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/overview/?view=netdesktop-6.0)
+[![MaterialDesign Badge](https://img.shields.io/badge/-MaterialDesign-ff69b4?style=flat&logo=MaterialDesign&logoColor=white)](http://materialdesigninxaml.net/)
+
 # JellyMusic
 WPF-driven pretty music player I built when I was 16 =)
 It uses MVVM pattern which was one of the first patterns I learned.
